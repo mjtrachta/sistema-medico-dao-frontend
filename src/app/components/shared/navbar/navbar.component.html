@@ -1,0 +1,95 @@
+<nav class="navbar" *ngIf="currentUser$ | async as user">
+  <div class="navbar-container">
+    <div class="navbar-brand">
+      <h1>Sistema Médico DAO</h1>
+    </div>
+
+    <button class="navbar-toggle" (click)="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <ul class="navbar-menu" [class.active]="menuOpen">
+      <!-- Turnos - visible para todos los usuarios autenticados -->
+      <li>
+        <a routerLink="/turnos" routerLinkActive="active" (click)="menuOpen = false">
+          Turnos
+        </a>
+      </li>
+
+      <!-- Pacientes - solo admin y recepcionista -->
+      <li *ngIf="authService.hasRole('admin', 'recepcionista')">
+        <a routerLink="/pacientes" routerLinkActive="active" (click)="menuOpen = false">
+          Pacientes
+        </a>
+      </li>
+
+      <!-- Mis Pacientes - solo médicos y admin -->
+      <li *ngIf="authService.hasRole('medico', 'admin')">
+        <a routerLink="/pacientes/mis-pacientes" routerLinkActive="active" (click)="menuOpen = false">
+          Mis Pacientes
+        </a>
+      </li>
+
+      <!-- Médicos - solo admin -->
+      <li *ngIf="authService.isAdmin()">
+        <a routerLink="/medicos" routerLinkActive="active" (click)="menuOpen = false">
+          Médicos
+        </a>
+      </li>
+
+      <!-- Especialidades - solo admin -->
+      <li *ngIf="authService.isAdmin()">
+        <a routerLink="/especialidades" routerLinkActive="active" (click)="menuOpen = false">
+          Especialidades
+        </a>
+      </li>
+
+      <!-- Ubicaciones - solo admin -->
+      <li *ngIf="authService.isAdmin()">
+        <a routerLink="/ubicaciones" routerLinkActive="active" (click)="menuOpen = false">
+          Ubicaciones
+        </a>
+      </li>
+
+      <!-- Horarios - médicos y admin -->
+      <li *ngIf="authService.hasRole('medico', 'admin')">
+        <a routerLink="/horarios" routerLinkActive="active" (click)="menuOpen = false">
+          Horarios
+        </a>
+      </li>
+
+      <!-- Historias Clínicas - admin, médicos y pacientes -->
+      <li *ngIf="authService.hasRole('admin', 'medico', 'paciente')">
+        <a routerLink="/historias-clinicas" routerLinkActive="active" (click)="menuOpen = false">
+          Historias Clínicas
+        </a>
+      </li>
+
+      <!-- Recetas - admin, médicos y pacientes -->
+      <li *ngIf="authService.hasRole('admin', 'medico', 'paciente')">
+        <a routerLink="/recetas" routerLinkActive="active" (click)="menuOpen = false">
+          Recetas
+        </a>
+      </li>
+
+      <!-- Reportes - solo admin -->
+      <li *ngIf="authService.isAdmin()">
+        <a routerLink="/reportes" routerLinkActive="active" (click)="menuOpen = false">
+          Reportes
+        </a>
+      </li>
+
+      <!-- Usuario actual y logout -->
+      <li class="user-menu">
+        <span class="user-info">
+          {{ user.nombre_usuario }} ({{ user.rol }})
+        </span>
+        <button class="btn-logout" (click)="logout()">
+          Cerrar Sesión
+        </button>
+      </li>
+    </ul>
+  </div>
+</nav>

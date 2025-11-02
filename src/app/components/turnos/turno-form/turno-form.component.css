@@ -1,0 +1,72 @@
+.duracion-info {
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-radius: 4px;
+  margin: 0;
+  color: #555;
+  font-size: 14px;
+}
+
+.fechas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.btn-fecha {
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.btn-fecha:hover {
+  border-color: #007bff;
+  background-color: #f8f9fa;
+}
+
+.btn-fecha.selected {
+  border-color: #007bff;
+  background-color: #007bff;
+  color: white;
+}
+
+.fecha-display {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.horarios-count {
+  font-size: 12px;
+  color: #666;
+}
+
+.btn-fecha.selected .horarios-count {
+  color: #e0e0e0;
+}
+
+.loading-fechas, .no-fechas {
+  padding: 15px;
+  text-align: center;
+  color: #666;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
+.info-message {
+  padding: 15px;
+  background-color: #e7f3ff;
+  border-left: 4px solid #007bff;
+  color: #004085;
+  margin: 0;
+  border-radius: 4px;
+}

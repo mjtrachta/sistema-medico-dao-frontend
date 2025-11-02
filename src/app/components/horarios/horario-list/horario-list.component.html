@@ -1,0 +1,205 @@
+<div class="container">
+  <div class="header">
+    <h2>Gestión de Horarios</h2>
+    <button class="btn btn-primary" (click)="openForm()">
+      Nuevo Horario
+    </button>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filtros-container">
+    <div class="filtros">
+      <div class="filtro-group" *ngIf="isAdmin()">
+        <label>Médico:</label>
+        <select [(ngModel)]="filtroMedicoId" class="form-control">
+          <option [value]="null">Todos los médicos</option>
+          <option *ngFor="let medico of medicos" [value]="medico.id">
+            {{ medico.nombre }} {{ medico.apellido }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filtro-group">
+        <label>Ubicación:</label>
+        <select [(ngModel)]="filtroUbicacionId" class="form-control">
+          <option [value]="null">Todas las ubicaciones</option>
+          <option *ngFor="let ubicacion of ubicaciones" [value]="ubicacion.id">
+            {{ ubicacion.nombre }}
+          </option>
+        </select>
+      </div>
+
+      <div class="filtro-actions">
+        <button class="btn btn-secondary" (click)="aplicarFiltros()">
+          Aplicar Filtros
+        </button>
+        <button class="btn btn-outline" (click)="limpiarFiltros()">
+          Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensajes -->
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+  <div *ngIf="loading && !showForm" class="loading">Cargando horarios...</div>
+
+  <!-- Tabla de horarios -->
+  <div *ngIf="!loading && horarios.length > 0" class="table-container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th *ngIf="isAdmin()">Médico</th>
+          <th>Ubicación</th>
+          <th>Día</th>
+          <th>Hora Inicio</th>
+          <th>Hora Fin</th>
+          <th>Especialidad</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let horario of horarios">
+          <td *ngIf="isAdmin()">
+            {{ horario.medico ? horario.medico.nombre_completo : getMedicoNombre(horario.medico_id) }}
+          </td>
+          <td>
+            {{ horario.ubicacion ? horario.ubicacion.nombre : getUbicacionNombre(horario.ubicacion_id) }}
+          </td>
+          <td>
+            <span class="dia-badge">{{ getDiaLabel(horario.dia_semana) }}</span>
+          </td>
+          <td>{{ horario.hora_inicio }}</td>
+          <td>{{ horario.hora_fin }}</td>
+          <td>
+            {{ horario.medico?.especialidad?.nombre || '-' }}
+          </td>
+          <td>
+            <span [class]="horario.activo ? 'badge badge-success' : 'badge badge-danger'">
+              {{ horario.activo ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-info" (click)="openForm(horario)">
+              Editar
+            </button>
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="deleteHorario(horario)"
+              [disabled]="!horario.activo">
+              Eliminar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Sin datos -->
+  <div *ngIf="!loading && horarios.length === 0" class="empty-state">
+    <p>No hay horarios registrados</p>
+    <button class="btn btn-primary" (click)="openForm()">
+      Crear Primer Horario
+    </button>
+  </div>
+
+  <!-- Modal Formulario -->
+  <div *ngIf="showForm" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>{{ editMode ? 'Editar Horario' : 'Nuevo Horario' }}</h3>
+        <button class="close-btn" (click)="closeForm()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <form (ngSubmit)="saveHorario()">
+          <!-- Admin selecciona médico -->
+          <div class="form-group" *ngIf="isAdmin() && !editMode">
+            <label for="medico">Médico *</label>
+            <select
+              id="medico"
+              [(ngModel)]="horarioForm.medico_id"
+              name="medico_id"
+              class="form-control"
+              required>
+              <option [value]="0">Seleccione un médico</option>
+              <option *ngFor="let medico of medicos" [value]="medico.id">
+                {{ medico.nombre }} {{ medico.apellido }} - {{ medico.especialidad?.nombre || 'Sin especialidad' }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="ubicacion">Ubicación *</label>
+            <select
+              id="ubicacion"
+              [(ngModel)]="horarioForm.ubicacion_id"
+              name="ubicacion_id"
+              class="form-control"
+              required>
+              <option [value]="0">Seleccione una ubicación</option>
+              <option *ngFor="let ubicacion of ubicaciones" [value]="ubicacion.id">
+                {{ ubicacion.nombre }} - {{ ubicacion.ciudad }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="dia">Día de la semana *</label>
+            <select
+              id="dia"
+              [(ngModel)]="horarioForm.dia_semana"
+              name="dia_semana"
+              class="form-control"
+              required>
+              <option value="">Seleccione un día</option>
+              <option *ngFor="let dia of diasSemana" [value]="dia.value">
+                {{ dia.label }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="hora_inicio">Hora Inicio *</label>
+              <input
+                type="time"
+                id="hora_inicio"
+                [(ngModel)]="horarioForm.hora_inicio"
+                name="hora_inicio"
+                class="form-control"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="hora_fin">Hora Fin *</label>
+              <input
+                type="time"
+                id="hora_fin"
+                [(ngModel)]="horarioForm.hora_fin"
+                name="hora_fin"
+                class="form-control"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-info">
+            <p><strong>Nota:</strong> El sistema validará que no haya superposición de horarios para el mismo médico.</p>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="closeForm()">
+              Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="loading">
+              {{ loading ? 'Guardando...' : 'Guardar' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

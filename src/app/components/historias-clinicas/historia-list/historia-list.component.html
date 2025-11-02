@@ -1,0 +1,89 @@
+<div class="historias-container">
+  <h2>Historias Clínicas</h2>
+
+  <div *ngIf="loading" class="loading">Cargando...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div *ngIf="!loading && !error && historias.length === 0" class="empty-message">
+    No hay historias clínicas registradas
+  </div>
+
+  <div *ngIf="!loading && !error && historias.length > 0" class="table-container">
+    <table class="historias-table">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Paciente</th>
+          <th>Médico</th>
+          <th>Diagnóstico</th>
+          <th>Tratamiento</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let historia of historias">
+          <td>{{ historia.fecha }}</td>
+          <td>{{ historia.paciente?.nombre_completo }}</td>
+          <td>{{ historia.medico?.nombre_completo }}</td>
+          <td>{{ historia.diagnostico }}</td>
+          <td>{{ historia.tratamiento }}</td>
+          <td>
+            <button class="btn-view" (click)="viewHistoria(historia)">Ver</button>
+            <button class="btn-edit" (click)="editHistoria(historia.id!)">Editar</button>
+            <button class="btn-delete" (click)="deleteHistoria(historia.id!)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal para ver detalles -->
+  <div *ngIf="showModal" class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Detalle de Historia Clínica</h3>
+        <button class="btn-close" (click)="closeModal()">×</button>
+      </div>
+      <div class="modal-body" *ngIf="selectedHistoria">
+        <div class="detail-section">
+          <h4>Información de la Consulta</h4>
+          <div class="detail-item">
+            <strong>Fecha:</strong>
+            <span>{{ selectedHistoria.fecha_consulta }}</span>
+          </div>
+          <div class="detail-item">
+            <strong>Paciente:</strong>
+            <span>{{ selectedHistoria.paciente?.nombre_completo }}</span>
+          </div>
+          <div class="detail-item">
+            <strong>Médico:</strong>
+            <span>{{ selectedHistoria.medico?.nombre_completo }}</span>
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h4>Motivo de Consulta</h4>
+          <p>{{ selectedHistoria.motivo_consulta || 'No especificado' }}</p>
+        </div>
+
+        <div class="detail-section">
+          <h4>Diagnóstico</h4>
+          <p>{{ selectedHistoria.diagnostico }}</p>
+        </div>
+
+        <div class="detail-section" *ngIf="selectedHistoria.tratamiento">
+          <h4>Tratamiento</h4>
+          <p>{{ selectedHistoria.tratamiento }}</p>
+        </div>
+
+        <div class="detail-section" *ngIf="selectedHistoria.observaciones">
+          <h4>Observaciones</h4>
+          <p>{{ selectedHistoria.observaciones }}</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

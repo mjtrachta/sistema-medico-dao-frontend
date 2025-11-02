@@ -1,0 +1,28 @@
+<div class="especialidades-container">
+  <h2>Gestión de Especialidades</h2>
+
+  <div *ngIf="loading" class="loading">Cargando...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div *ngIf="!loading && !error" class="table-container">
+    <table class="especialidades-table">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let especialidad of especialidades">
+          <td>{{ especialidad.nombre }}</td>
+          <td>{{ especialidad.descripcion }}</td>
+          <td>
+            <button class="btn-edit">Editar</button>
+            <button class="btn-delete" (click)="deleteEspecialidad(especialidad.id!)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

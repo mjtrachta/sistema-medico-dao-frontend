@@ -1,0 +1,141 @@
+<div class="atencion-container">
+  <div class="header">
+    <h2>Atención Médica</h2>
+    <button class="btn-cancel" (click)="volver()">Volver</button>
+  </div>
+
+  <div *ngIf="loading" class="loading">Cargando...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div *ngIf="!loading && turno" class="content">
+    <!-- Información del Turno -->
+    <div class="card">
+      <h3>Información del Turno</h3>
+      <div class="info-grid">
+        <div class="info-item">
+          <strong>Código:</strong>
+          <span>{{ turno.codigo_turno }}</span>
+        </div>
+        <div class="info-item">
+          <strong>Fecha:</strong>
+          <span>{{ formatDateDDMMYYYY(turno.fecha) }}</span>
+        </div>
+        <div class="info-item">
+          <strong>Hora:</strong>
+          <span>{{ turno.hora }}</span>
+        </div>
+        <div class="info-item">
+          <strong>Estado:</strong>
+          <span [class]="'estado-' + turno.estado">{{ turno.estado }}</span>
+        </div>
+        <div class="info-item" *ngIf="turno.motivo_consulta">
+          <strong>Motivo de Consulta:</strong>
+          <span>{{ turno.motivo_consulta }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Información del Paciente -->
+    <div class="card" *ngIf="turno.paciente">
+      <h3>Información del Paciente</h3>
+      <div class="info-grid">
+        <div class="info-item">
+          <strong>Nombre:</strong>
+          <span>{{ turno.paciente.nombre_completo }}</span>
+        </div>
+        <div class="info-item" *ngIf="turno.paciente.nro_historia_clinica">
+          <strong>Nro. Historia Clínica:</strong>
+          <span>{{ turno.paciente.nro_historia_clinica }}</span>
+        </div>
+        <div class="info-item" *ngIf="turno.paciente.telefono">
+          <strong>Teléfono:</strong>
+          <span>{{ turno.paciente.telefono }}</span>
+        </div>
+        <div class="info-item" *ngIf="turno.paciente.email">
+          <strong>Email:</strong>
+          <span>{{ turno.paciente.email }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Acciones Principales -->
+    <div class="acciones-principales">
+      <button class="btn-nuevo" (click)="crearHistoriaClinica()">
+        Nueva Historia Clínica
+      </button>
+      <button class="btn-nuevo" (click)="crearReceta()">
+        Nueva Receta
+      </button>
+    </div>
+
+    <!-- Historias Clínicas del Paciente -->
+    <div class="card">
+      <h3>Historias Clínicas Previas</h3>
+      <div *ngIf="historias.length === 0" class="empty-message">
+        El paciente no tiene historias clínicas registradas
+      </div>
+      <div *ngIf="historias.length > 0" class="historias-list">
+        <div *ngFor="let historia of historias" class="historia-item">
+          <div class="historia-header">
+            <strong>{{ formatDateDDMMYYYY(historia.fecha_consulta) }}</strong>
+            <span *ngIf="historia.medico" class="medico-nombre">
+              Dr./Dra. {{ historia.medico.nombre_completo }}
+            </span>
+          </div>
+          <div class="historia-body">
+            <div *ngIf="historia.motivo_consulta">
+              <strong>Motivo:</strong> {{ historia.motivo_consulta }}
+            </div>
+            <div *ngIf="historia.diagnostico">
+              <strong>Diagnóstico:</strong> {{ historia.diagnostico }}
+            </div>
+            <div *ngIf="historia.tratamiento">
+              <strong>Tratamiento:</strong> {{ historia.tratamiento }}
+            </div>
+            <div *ngIf="historia.observaciones">
+              <strong>Observaciones:</strong> {{ historia.observaciones }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recetas del Paciente -->
+    <div class="card">
+      <h3>Recetas Médicas</h3>
+      <div *ngIf="recetas.length === 0" class="empty-message">
+        El paciente no tiene recetas registradas
+      </div>
+      <div *ngIf="recetas.length > 0" class="recetas-list">
+        <div *ngFor="let receta of recetas" class="receta-item">
+          <div class="receta-header">
+            <div>
+              <strong>{{ receta.codigo_receta }}</strong>
+              <span class="receta-fecha">{{ formatDateDDMMYYYY(receta.fecha) }}</span>
+            </div>
+            <span [class]="'estado-' + receta.estado">{{ receta.estado }}</span>
+          </div>
+          <div class="receta-body" *ngIf="receta.items && receta.items.length > 0">
+            <div *ngFor="let item of receta.items" class="medicamento-item">
+              <strong>{{ item.nombre_medicamento }}</strong>
+              <div class="medicamento-detalles">
+                <span>Dosis: {{ item.dosis }}</span>
+                <span>Frecuencia: {{ item.frecuencia }}</span>
+                <span *ngIf="item.duracion_dias">Duración: {{ item.duracion_dias }} días</span>
+              </div>
+              <div *ngIf="item.instrucciones" class="instrucciones">
+                {{ item.instrucciones }}
+              </div>
+            </div>
+          </div>
+          <div class="receta-footer">
+            <span *ngIf="receta.medico">Dr./Dra. {{ receta.medico.nombre_completo }}</span>
+            <span *ngIf="receta.valida_hasta">
+              Válida hasta: {{ formatDateDDMMYYYY(receta.valida_hasta) }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

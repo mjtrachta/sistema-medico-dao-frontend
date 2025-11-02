@@ -1,0 +1,107 @@
+<div class="turno-form-container">
+  <h2>Nuevo Turno</h2>
+
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <form [formGroup]="turnoForm" (ngSubmit)="onSubmit()" class="turno-form">
+    <div class="form-group" *ngIf="isAdminOrRecepcionista">
+      <label for="paciente_id">Paciente *</label>
+      <select id="paciente_id" formControlName="paciente_id" class="form-control">
+        <option value="">Seleccionar paciente</option>
+        <option *ngFor="let paciente of pacientes" [value]="paciente.id">
+          {{ paciente.nombre_completo }} - {{ paciente.nro_documento }}
+        </option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="medico_id">Médico *</label>
+      <select id="medico_id" formControlName="medico_id" class="form-control">
+        <option value="">Seleccionar médico</option>
+        <option *ngFor="let medico of medicos" [value]="medico.id">
+          {{ medico.nombre_completo }} - {{ medico.especialidad?.nombre }}
+        </option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="ubicacion_id">Ubicación *</label>
+      <select id="ubicacion_id" formControlName="ubicacion_id" class="form-control">
+        <option value="">Seleccionar ubicación</option>
+        <option *ngFor="let ubicacion of ubicaciones" [value]="ubicacion.id">
+          {{ ubicacion.nombre }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Mostrar fechas disponibles si se seleccionó médico -->
+    <div class="form-group" *ngIf="turnoForm.get('medico_id')?.value">
+      <label>Fechas Disponibles *</label>
+      <div *ngIf="loadingFechas" class="loading-fechas">Buscando fechas disponibles...</div>
+      <div *ngIf="!loadingFechas && fechasDisponibles.length === 0" class="no-fechas">
+        Este médico no tiene fechas disponibles en los próximos 30 días
+      </div>
+      <div *ngIf="!loadingFechas && fechasDisponibles.length > 0" class="fechas-grid">
+        <button
+          *ngFor="let fechaObj of fechasDisponibles"
+          type="button"
+          class="btn-fecha"
+          [class.selected]="turnoForm.get('fecha')?.value === fechaObj.fecha"
+          (click)="selectFecha(fechaObj.fecha)">
+          <div class="fecha-display">{{ formatDateDDMMYYYY(fechaObj.fecha) }}</div>
+          <div class="horarios-count">{{ fechaObj.cantidad_horarios }} horarios</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Si no hay médico seleccionado, mostrar mensaje -->
+    <div class="form-group" *ngIf="!turnoForm.get('medico_id')?.value">
+      <label>Fechas Disponibles *</label>
+      <p class="info-message">Seleccione un médico para ver las fechas disponibles</p>
+    </div>
+
+    <!-- Solo admin/recepcionista pueden modificar la duración -->
+    <div class="form-group" *ngIf="isAdminOrRecepcionista">
+      <label for="duracion_min">Duración (minutos) *</label>
+      <input type="number" id="duracion_min" formControlName="duracion_min" class="form-control" min="15" step="15">
+    </div>
+
+    <!-- Pacientes y médicos usan duración fija de 30 minutos -->
+    <div class="form-group" *ngIf="!isAdminOrRecepcionista">
+      <label>Duración de la consulta</label>
+      <p class="duracion-info">30 minutos (estándar)</p>
+    </div>
+
+    <div class="form-group" *ngIf="turnoForm.get('medico_id')?.value && turnoForm.get('fecha')?.value">
+      <label>Horarios Disponibles</label>
+      <div *ngIf="loadingHorarios" class="loading-horarios">Cargando horarios...</div>
+      <div *ngIf="!loadingHorarios && horariosDisponibles.length === 0" class="no-horarios">
+        No hay horarios disponibles para esta fecha
+      </div>
+      <div *ngIf="!loadingHorarios && horariosDisponibles.length > 0" class="horarios-grid">
+        <button
+          *ngFor="let horario of horariosDisponibles"
+          type="button"
+          class="btn-horario"
+          [class.selected]="turnoForm.get('hora')?.value === horario"
+          (click)="selectHorario(horario)">
+          {{ horario }}
+        </button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="motivo_consulta">Motivo de Consulta</label>
+      <textarea id="motivo_consulta" formControlName="motivo_consulta" class="form-control" rows="3"></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn-submit" [disabled]="!turnoForm.valid || loading">
+        {{ loading ? 'Creando...' : 'Crear Turno' }}
+      </button>
+      <button type="button" class="btn-cancel" (click)="router.navigate(['/turnos'])">
+        Cancelar
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,134 @@
+<div class="container">
+  <div class="header">
+    <h2>Gestión de Ubicaciones</h2>
+    <button *ngIf="isAdmin()" class="btn btn-primary" (click)="openForm()">
+      Nueva Ubicación
+    </button>
+  </div>
+
+  <!-- Mensajes -->
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+  <div *ngIf="loading && !showForm" class="loading">Cargando ubicaciones...</div>
+
+  <!-- Tabla de ubicaciones -->
+  <div *ngIf="!loading && ubicaciones.length > 0" class="table-container">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Dirección</th>
+          <th>Ciudad</th>
+          <th>Teléfono</th>
+          <th>Estado</th>
+          <th *ngIf="isAdmin()">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ubicacion of ubicaciones">
+          <td>{{ ubicacion.nombre }}</td>
+          <td>{{ ubicacion.direccion }}</td>
+          <td>{{ ubicacion.ciudad }}</td>
+          <td>{{ ubicacion.telefono || '-' }}</td>
+          <td>
+            <span [class]="ubicacion.activo ? 'badge badge-success' : 'badge badge-danger'">
+              {{ ubicacion.activo ? 'Activa' : 'Inactiva' }}
+            </span>
+          </td>
+          <td *ngIf="isAdmin()">
+            <button class="btn btn-sm btn-info" (click)="openForm(ubicacion)">
+              Editar
+            </button>
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="deleteUbicacion(ubicacion)"
+              [disabled]="!ubicacion.activo">
+              Eliminar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Sin datos -->
+  <div *ngIf="!loading && ubicaciones.length === 0" class="empty-state">
+    <p>No hay ubicaciones registradas</p>
+    <button *ngIf="isAdmin()" class="btn btn-primary" (click)="openForm()">
+      Crear Primera Ubicación
+    </button>
+  </div>
+
+  <!-- Modal Formulario -->
+  <div *ngIf="showForm" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>{{ editMode ? 'Editar Ubicación' : 'Nueva Ubicación' }}</h3>
+        <button class="close-btn" (click)="closeForm()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <form (ngSubmit)="saveUbicacion()">
+          <div class="form-group">
+            <label for="nombre">Nombre *</label>
+            <input
+              type="text"
+              id="nombre"
+              [(ngModel)]="ubicacionForm.nombre"
+              name="nombre"
+              class="form-control"
+              required
+              placeholder="Ej: Sede Centro"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="direccion">Dirección *</label>
+            <input
+              type="text"
+              id="direccion"
+              [(ngModel)]="ubicacionForm.direccion"
+              name="direccion"
+              class="form-control"
+              required
+              placeholder="Ej: Av. Colón 1234"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="ciudad">Ciudad *</label>
+            <input
+              type="text"
+              id="ciudad"
+              [(ngModel)]="ubicacionForm.ciudad"
+              name="ciudad"
+              class="form-control"
+              required
+              placeholder="Ej: Córdoba"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="telefono">Teléfono</label>
+            <input
+              type="tel"
+              id="telefono"
+              [(ngModel)]="ubicacionForm.telefono"
+              name="telefono"
+              class="form-control"
+              placeholder="Ej: 351-1234567"
+            />
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="closeForm()">
+              Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="loading">
+              {{ loading ? 'Guardando...' : 'Guardar' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

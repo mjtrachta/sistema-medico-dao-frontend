@@ -1,0 +1,108 @@
+<div class="detalle-container">
+  <div class="header">
+    <h2>Historial del Paciente</h2>
+    <button class="btn-cancel" (click)="volver()">Volver</button>
+  </div>
+
+  <div *ngIf="loading" class="loading">Cargando...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div *ngIf="!loading && paciente" class="content">
+    <!-- Información del Paciente -->
+    <div class="card">
+      <h3>Datos del Paciente</h3>
+      <div class="info-grid">
+        <div class="info-item">
+          <strong>Nombre Completo:</strong>
+          <span>{{ paciente.nombre }} {{ paciente.apellido }}</span>
+        </div>
+        <div class="info-item">
+          <strong>Historia Clínica:</strong>
+          <span>{{ paciente.nro_historia_clinica }}</span>
+        </div>
+        <div class="info-item">
+          <strong>Documento:</strong>
+          <span>{{ paciente.tipo_documento }} {{ paciente.nro_documento }}</span>
+        </div>
+        <div class="info-item">
+          <strong>Fecha Nacimiento:</strong>
+          <span>{{ formatDateDDMMYYYY(paciente.fecha_nacimiento) }}</span>
+        </div>
+        <div class="info-item" *ngIf="paciente.telefono">
+          <strong>Teléfono:</strong>
+          <span>{{ paciente.telefono }}</span>
+        </div>
+        <div class="info-item" *ngIf="paciente.email">
+          <strong>Email:</strong>
+          <span>{{ paciente.email }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón para crear receta -->
+    <div class="acciones-principales">
+      <button class="btn-nuevo" (click)="crearReceta()">Nueva Receta</button>
+    </div>
+
+    <!-- Historias Clínicas -->
+    <div class="card">
+      <h3>Historias Clínicas</h3>
+      <div *ngIf="historias.length === 0" class="empty-message">
+        No hay historias clínicas registradas
+      </div>
+      <div *ngIf="historias.length > 0" class="historias-list">
+        <div *ngFor="let historia of historias" class="historia-item">
+          <div class="historia-header">
+            <strong>{{ formatDateDDMMYYYY(historia.fecha_consulta) }}</strong>
+            <span *ngIf="historia.medico" class="medico-nombre">
+              Dr./Dra. {{ historia.medico.nombre_completo }}
+            </span>
+          </div>
+          <div class="historia-body">
+            <div *ngIf="historia.motivo_consulta">
+              <strong>Motivo:</strong> {{ historia.motivo_consulta }}
+            </div>
+            <div *ngIf="historia.diagnostico">
+              <strong>Diagnóstico:</strong> {{ historia.diagnostico }}
+            </div>
+            <div *ngIf="historia.tratamiento">
+              <strong>Tratamiento:</strong> {{ historia.tratamiento }}
+            </div>
+            <div *ngIf="historia.observaciones">
+              <strong>Observaciones:</strong> {{ historia.observaciones }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recetas -->
+    <div class="card">
+      <h3>Recetas Médicas</h3>
+      <div *ngIf="recetas.length === 0" class="empty-message">
+        No hay recetas registradas
+      </div>
+      <div *ngIf="recetas.length > 0" class="recetas-list">
+        <div *ngFor="let receta of recetas" class="receta-item">
+          <div class="receta-header">
+            <div>
+              <strong>{{ receta.codigo_receta }}</strong>
+              <span class="receta-fecha">{{ formatDateDDMMYYYY(receta.fecha) }}</span>
+            </div>
+            <span [class]="'estado-' + receta.estado">{{ receta.estado }}</span>
+          </div>
+          <div class="receta-body" *ngIf="receta.items && receta.items.length > 0">
+            <div *ngFor="let item of receta.items" class="medicamento-item">
+              <strong>{{ item.nombre_medicamento }}</strong>
+              <div class="medicamento-detalles">
+                <span>Dosis: {{ item.dosis }}</span>
+                <span>Frecuencia: {{ item.frecuencia }}</span>
+                <span *ngIf="item.duracion_dias">Duración: {{ item.duracion_dias }} días</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

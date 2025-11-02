@@ -1,0 +1,122 @@
+<div class="form-container">
+  <div class="header">
+    <h2>Nueva Historia Clínica</h2>
+  </div>
+
+  <!-- Información del Turno -->
+  <div *ngIf="turno" class="turno-info">
+    <h3>Turno: {{ turno.codigo_turno }}</h3>
+    <p><strong>Paciente:</strong> {{ turno.paciente?.nombre_completo }}</p>
+    <p *ngIf="turno.motivo_consulta"><strong>Motivo:</strong> {{ turno.motivo_consulta }}</p>
+  </div>
+
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <form [formGroup]="historiaForm" (ngSubmit)="onSubmit()">
+    <!-- Diagnóstico -->
+    <div class="form-group">
+      <label for="diagnostico">Diagnóstico *</label>
+      <textarea
+        id="diagnostico"
+        formControlName="diagnostico"
+        rows="4"
+        placeholder="Ingrese el diagnóstico del paciente"
+        class="form-control"></textarea>
+      <div *ngIf="historiaForm.get('diagnostico')?.invalid && historiaForm.get('diagnostico')?.touched" class="error-message">
+        El diagnóstico es requerido
+      </div>
+    </div>
+
+    <!-- Tratamiento -->
+    <div class="form-group">
+      <label for="tratamiento">Tratamiento</label>
+      <textarea
+        id="tratamiento"
+        formControlName="tratamiento"
+        rows="4"
+        placeholder="Ingrese el tratamiento indicado"
+        class="form-control"></textarea>
+    </div>
+
+    <!-- Observaciones -->
+    <div class="form-group">
+      <label for="observaciones">Observaciones</label>
+      <textarea
+        id="observaciones"
+        formControlName="observaciones"
+        rows="3"
+        placeholder="Observaciones adicionales"
+        class="form-control"></textarea>
+    </div>
+
+    <!-- Signos Vitales -->
+    <div class="signos-vitales-section">
+      <h3>Signos Vitales (Opcional)</h3>
+
+      <div class="signos-grid">
+        <div class="form-group">
+          <label for="presion_arterial">Presión Arterial</label>
+          <input
+            type="text"
+            id="presion_arterial"
+            formControlName="presion_arterial"
+            placeholder="120/80"
+            class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label for="temperatura">Temperatura (°C)</label>
+          <input
+            type="number"
+            id="temperatura"
+            formControlName="temperatura"
+            step="0.1"
+            placeholder="36.5"
+            class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label for="frecuencia_cardiaca">Frecuencia Cardíaca (bpm)</label>
+          <input
+            type="number"
+            id="frecuencia_cardiaca"
+            formControlName="frecuencia_cardiaca"
+            placeholder="70"
+            class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label for="peso">Peso (kg)</label>
+          <input
+            type="number"
+            id="peso"
+            formControlName="peso"
+            step="0.1"
+            placeholder="70.5"
+            class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label for="altura">Altura (cm)</label>
+          <input
+            type="number"
+            id="altura"
+            formControlName="altura"
+            step="0.1"
+            placeholder="170"
+            class="form-control">
+        </div>
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="form-actions">
+      <button type="submit" class="btn-submit" [disabled]="historiaForm.invalid || loading">
+        {{ loading ? 'Guardando...' : 'Guardar Historia Clínica' }}
+      </button>
+      <button type="button" class="btn-cancel" (click)="cancelar()">
+        Cancelar
+      </button>
+    </div>
+  </form>
+</div>

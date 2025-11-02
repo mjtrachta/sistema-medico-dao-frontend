@@ -1,0 +1,50 @@
+<div class="pacientes-container">
+  <div class="header">
+    <h2>Mis Pacientes</h2>
+    <div class="search-box">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (keyup.enter)="onSearch()"
+        placeholder="Buscar por nombre, documento o historia clínica..."
+        class="search-input">
+      <button class="btn-search" (click)="onSearch()">Buscar</button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading">Cargando...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div *ngIf="!loading && !error && pacientes.length === 0" class="empty-message">
+    No se encontraron pacientes
+  </div>
+
+  <div *ngIf="!loading && !error && pacientes.length > 0" class="table-container">
+    <table class="pacientes-table">
+      <thead>
+        <tr>
+          <th>Historia Clínica</th>
+          <th>Nombre Completo</th>
+          <th>Documento</th>
+          <th>Fecha Nacimiento</th>
+          <th>Teléfono</th>
+          <th>Email</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let paciente of pacientes">
+          <td>{{ paciente.nro_historia_clinica }}</td>
+          <td>{{ paciente.nombre }} {{ paciente.apellido }}</td>
+          <td>{{ paciente.tipo_documento }} {{ paciente.nro_documento }}</td>
+          <td>{{ formatDateDDMMYYYY(paciente.fecha_nacimiento) }}</td>
+          <td>{{ paciente.telefono || '-' }}</td>
+          <td>{{ paciente.email || '-' }}</td>
+          <td>
+            <button class="btn-view" (click)="verDetalle(paciente.id!)">Ver Historial</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

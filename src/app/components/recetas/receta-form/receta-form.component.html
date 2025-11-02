@@ -1,0 +1,137 @@
+<div class="form-container">
+  <div class="header">
+    <h2>Nueva Receta Médica</h2>
+  </div>
+
+  <!-- Información del Turno/Paciente -->
+  <div *ngIf="turno" class="turno-info">
+    <h3>Turno: {{ turno.codigo_turno }}</h3>
+    <p><strong>Paciente:</strong> {{ turno.paciente?.nombre_completo }}</p>
+    <p *ngIf="turno.motivo_consulta"><strong>Motivo:</strong> {{ turno.motivo_consulta }}</p>
+  </div>
+
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <form [formGroup]="recetaForm" (ngSubmit)="onSubmit()">
+    <!-- Validez de la Receta -->
+    <div class="form-group">
+      <label for="dias_validez">Días de Validez *</label>
+      <input
+        type="number"
+        id="dias_validez"
+        formControlName="dias_validez"
+        min="1"
+        placeholder="30"
+        class="form-control">
+      <small>La receta será válida por este número de días desde su emisión</small>
+    </div>
+
+    <!-- Medicamentos -->
+    <div class="medicamentos-section">
+      <div class="section-header">
+        <h3>Medicamentos</h3>
+        <button type="button" class="btn-agregar" (click)="agregarMedicamento()">
+          + Agregar Medicamento
+        </button>
+      </div>
+
+      <div formArrayName="items" class="medicamentos-list">
+        <div *ngFor="let item of items.controls; let i = index" [formGroupName]="i" class="medicamento-card">
+          <div class="medicamento-header">
+            <h4>Medicamento {{ i + 1 }}</h4>
+            <button
+              *ngIf="items.length > 1"
+              type="button"
+              class="btn-eliminar"
+              (click)="eliminarMedicamento(i)">
+              Eliminar
+            </button>
+          </div>
+
+          <div class="medicamento-grid">
+            <div class="form-group full-width">
+              <label [for]="'nombre_medicamento_' + i">Nombre del Medicamento *</label>
+              <input
+                type="text"
+                [id]="'nombre_medicamento_' + i"
+                formControlName="nombre_medicamento"
+                placeholder="Ej: Ibuprofeno 400mg"
+                class="form-control">
+              <div *ngIf="item.get('nombre_medicamento')?.invalid && item.get('nombre_medicamento')?.touched" class="error-message">
+                El nombre del medicamento es requerido
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label [for]="'dosis_' + i">Dosis *</label>
+              <input
+                type="text"
+                [id]="'dosis_' + i"
+                formControlName="dosis"
+                placeholder="Ej: 1 comprimido"
+                class="form-control">
+              <div *ngIf="item.get('dosis')?.invalid && item.get('dosis')?.touched" class="error-message">
+                La dosis es requerida
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label [for]="'frecuencia_' + i">Frecuencia *</label>
+              <input
+                type="text"
+                [id]="'frecuencia_' + i"
+                formControlName="frecuencia"
+                placeholder="Ej: Cada 8 horas"
+                class="form-control">
+              <div *ngIf="item.get('frecuencia')?.invalid && item.get('frecuencia')?.touched" class="error-message">
+                La frecuencia es requerida
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label [for]="'cantidad_' + i">Cantidad *</label>
+              <input
+                type="number"
+                [id]="'cantidad_' + i"
+                formControlName="cantidad"
+                min="1"
+                placeholder="1"
+                class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label [for]="'duracion_dias_' + i">Duración (días)</label>
+              <input
+                type="number"
+                [id]="'duracion_dias_' + i"
+                formControlName="duracion_dias"
+                min="1"
+                placeholder="7"
+                class="form-control">
+            </div>
+
+            <div class="form-group full-width">
+              <label [for]="'instrucciones_' + i">Instrucciones Especiales</label>
+              <textarea
+                [id]="'instrucciones_' + i"
+                formControlName="instrucciones"
+                rows="2"
+                placeholder="Ej: Tomar con alimentos"
+                class="form-control"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="form-actions">
+      <button type="submit" class="btn-submit" [disabled]="recetaForm.invalid || loading || !pacienteId">
+        {{ loading ? 'Guardando...' : 'Generar Receta' }}
+      </button>
+      <button type="button" class="btn-cancel" (click)="cancelar()">
+        Cancelar
+      </button>
+    </div>
+  </form>
+</div>

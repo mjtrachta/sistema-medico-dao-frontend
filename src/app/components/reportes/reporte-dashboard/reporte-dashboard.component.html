@@ -1,0 +1,162 @@
+<div class="reportes-container">
+  <h2>Reportes y Estadísticas</h2>
+
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <form [formGroup]="reporteForm" (ngSubmit)="generarReporte()" class="reporte-form">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="tipo">Tipo de Reporte *</label>
+        <select id="tipo" formControlName="tipo" class="form-control">
+          <option value="">Seleccionar tipo</option>
+          <option value="turnos_medico">Turnos por Médico</option>
+          <option value="turnos_especialidad">Turnos por Especialidad</option>
+          <option value="pacientes_atendidos">Pacientes Atendidos</option>
+          <option value="estadisticas_asistencia">Estadísticas de Asistencia</option>
+        </select>
+      </div>
+
+      <div class="form-group" *ngIf="tipoReporte === 'turnos_medico'">
+        <label for="medico_id">Médico *</label>
+        <select id="medico_id" formControlName="medico_id" class="form-control">
+          <option value="">Seleccionar médico</option>
+          <option *ngFor="let medico of medicos" [value]="medico.id">
+            {{ medico.nombre_completo }}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group" *ngIf="tipoReporte === 'turnos_especialidad'">
+        <label for="especialidad_id">Especialidad *</label>
+        <select id="especialidad_id" formControlName="especialidad_id" class="form-control">
+          <option value="">Seleccionar especialidad</option>
+          <option *ngFor="let especialidad of especialidades" [value]="especialidad.id">
+            {{ especialidad.nombre }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="fecha_inicio">Fecha Inicio *</label>
+        <input type="date" id="fecha_inicio" formControlName="fecha_inicio" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label for="fecha_fin">Fecha Fin *</label>
+        <input type="date" id="fecha_fin" formControlName="fecha_fin" class="form-control">
+      </div>
+    </div>
+
+    <button type="submit" class="btn-generar" [disabled]="!reporteForm.valid || loading">
+      {{ loading ? 'Generando...' : 'Generar Reporte' }}
+    </button>
+  </form>
+
+  <!-- Reporte de Turnos por Médico -->
+  <div *ngIf="reporteTurnosMedico" class="reporte-resultado">
+    <h3>Turnos por Médico</h3>
+    <div class="reporte-stats">
+      <div class="stat-card">
+        <span class="stat-label">Total de Turnos</span>
+        <span class="stat-value">{{ reporteTurnosMedico.total_turnos }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Confirmados</span>
+        <span class="stat-value">{{ reporteTurnosMedico.confirmados }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Completados</span>
+        <span class="stat-value">{{ reporteTurnosMedico.completados }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Cancelados</span>
+        <span class="stat-value">{{ reporteTurnosMedico.cancelados }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Ausentes</span>
+        <span class="stat-value">{{ reporteTurnosMedico.ausentes }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reporte de Turnos por Especialidad -->
+  <div *ngIf="reporteTurnosEspecialidad" class="reporte-resultado">
+    <h3>Turnos por Especialidad</h3>
+    <div class="reporte-stats">
+      <div class="stat-card">
+        <span class="stat-label">Total de Turnos</span>
+        <span class="stat-value">{{ reporteTurnosEspecialidad.total_turnos }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Médicos Activos</span>
+        <span class="stat-value">{{ reporteTurnosEspecialidad.total_medicos }}</span>
+      </div>
+    </div>
+    <table class="reporte-table" *ngIf="reporteTurnosEspecialidad.medicos_turnos.length > 0">
+      <thead>
+        <tr>
+          <th>Médico</th>
+          <th>Total Turnos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let medico of reporteTurnosEspecialidad.medicos_turnos">
+          <td>{{ medico.medico_nombre }}</td>
+          <td>{{ medico.total }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Reporte de Pacientes Atendidos -->
+  <div *ngIf="reportePacientes" class="reporte-resultado">
+    <h3>Pacientes Atendidos</h3>
+    <div class="reporte-stats">
+      <div class="stat-card">
+        <span class="stat-label">Total de Pacientes</span>
+        <span class="stat-value">{{ reportePacientes.total_pacientes }}</span>
+      </div>
+    </div>
+    <table class="reporte-table" *ngIf="reportePacientes.pacientes.length > 0">
+      <thead>
+        <tr>
+          <th>Paciente</th>
+          <th>Total Consultas</th>
+          <th>Última Consulta</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let paciente of reportePacientes.pacientes">
+          <td>{{ paciente.paciente_nombre }}</td>
+          <td>{{ paciente.total_consultas }}</td>
+          <td>{{ paciente.ultima_consulta }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Reporte de Estadísticas de Asistencia -->
+  <div *ngIf="reporteAsistencia" class="reporte-resultado">
+    <h3>Estadísticas de Asistencia</h3>
+    <div class="reporte-stats">
+      <div class="stat-card">
+        <span class="stat-label">Total de Turnos</span>
+        <span class="stat-value">{{ reporteAsistencia.total_turnos }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Completados</span>
+        <span class="stat-value">{{ reporteAsistencia.completados }} ({{ reporteAsistencia.porcentaje_completados }}%)</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Cancelados</span>
+        <span class="stat-value">{{ reporteAsistencia.cancelados }} ({{ reporteAsistencia.porcentaje_cancelados }}%)</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Ausentes</span>
+        <span class="stat-value">{{ reporteAsistencia.ausentes }} ({{ reporteAsistencia.porcentaje_ausentes }}%)</span>
+      </div>
+    </div>
+  </div>
+</div>

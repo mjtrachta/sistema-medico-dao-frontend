@@ -1,0 +1,80 @@
+<div class="turnos-container">
+  <div class="header">
+    <h2>Gestión de Turnos</h2>
+    <button *ngIf="canCreateTurno()" class="btn-nuevo" (click)="nuevoTurno()">Nuevo Turno</button>
+  </div>
+
+  <div *ngIf="loading" class="loading">Cargando...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div *ngIf="!loading && !error" class="table-container">
+    <table class="turnos-table">
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Fecha</th>
+          <th>Hora</th>
+          <th>Paciente</th>
+          <th>Médico</th>
+          <th>Especialidad</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let turno of turnos">
+          <td>{{ turno.codigo_turno }}</td>
+          <td>{{ formatDateDDMMYYYY(turno.fecha) }}</td>
+          <td>{{ turno.hora }}</td>
+          <td>{{ turno.paciente?.nombre_completo }}</td>
+          <td>{{ turno.medico?.nombre_completo }}</td>
+          <td>{{ turno.medico?.especialidad?.nombre }}</td>
+          <td>
+            <span [class]="getEstadoClass(turno.estado || '')">
+              {{ turno.estado }}
+            </span>
+          </td>
+          <td>
+            <div class="acciones-group">
+              <!-- Solo médico puede atender paciente -->
+              <button
+                *ngIf="(turno.estado === 'confirmado' || turno.estado === 'completado') && isMedico"
+                class="btn-atender"
+                (click)="atenderPaciente(turno.id!)">
+                Atender
+              </button>
+              <!-- Solo médico, admin y recepcionista pueden confirmar -->
+              <button
+                *ngIf="turno.estado === 'pendiente' && canConfirmar()"
+                class="btn-confirmar"
+                (click)="confirmarTurno(turno.id!)">
+                Confirmar
+              </button>
+              <!-- Solo médico, admin y recepcionista pueden completar -->
+              <button
+                *ngIf="turno.estado === 'confirmado' && canCompletar()"
+                class="btn-completar"
+                (click)="completarTurno(turno.id!)">
+                Completar
+              </button>
+              <!-- Solo médico, admin y recepcionista pueden marcar ausente -->
+              <button
+                *ngIf="turno.estado === 'confirmado' && canCompletar()"
+                class="btn-ausente"
+                (click)="marcarAusente(turno.id!)">
+                Ausente
+              </button>
+              <!-- Todos pueden cancelar (backend valida permisos) -->
+              <button
+                *ngIf="(turno.estado === 'pendiente' || turno.estado === 'confirmado') && canCancelar()"
+                class="btn-cancelar"
+                (click)="cancelarTurno(turno.id!)">
+                Cancelar
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
