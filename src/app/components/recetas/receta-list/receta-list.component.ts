@@ -57,14 +57,8 @@ export class RecetaListComponent implements OnInit {
     }
   }
 
-  deleteReceta(id: number) {
-    if (confirm('¿Está seguro de eliminar esta receta?')) {
-      this.recetaService.delete(id).subscribe({
-        next: () => this.loadRecetas(),
-        error: (err: any) => console.error(err)
-      });
-    }
-  }
+  // Las recetas son documentos médico-legales y no se pueden eliminar.
+  // Solo se pueden cancelar usando cancelarReceta()
 
   getEstadoClass(estado: string): string {
     const estadoMap: { [key: string]: string } = {

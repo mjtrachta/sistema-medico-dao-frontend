@@ -33,8 +33,11 @@ describe('RecetaListComponent', () => {
     }).compileComponents();
 
     recetaService = TestBed.inject(RecetaService) as jasmine.SpyObj<RecetaService>;
+    recetaService.getAll.and.returnValue(of([]));
+
     fixture = TestBed.createComponent(RecetaListComponent);
     component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
   it('should create', () => {
@@ -51,13 +54,16 @@ describe('RecetaListComponent', () => {
     expect(component.loading).toBeFalse();
   });
 
-  it('should handle error when loading recetas', () => {
+  it('should handle error when loading recetas', (done) => {
     recetaService.getAll.and.returnValue(throwError(() => new Error('Error')));
 
     component.ngOnInit();
 
-    expect(component.error).toBe('Error cargando recetas');
-    expect(component.loading).toBeFalse();
+    setTimeout(() => {
+      expect(component.error).toBe('Error cargando recetas');
+      expect(component.loading).toBeFalse();
+      done();
+    }, 0);
   });
 
   it('should cancelar receta', () => {
@@ -71,15 +77,8 @@ describe('RecetaListComponent', () => {
     expect(recetaService.cancelar).toHaveBeenCalledWith(1);
   });
 
-  it('should delete receta', () => {
-    spyOn(window, 'confirm').and.returnValue(true);
-    recetaService.delete.and.returnValue(of(void 0));
-    recetaService.getAll.and.returnValue(of(mockRecetas));
-
-    component.deleteReceta(1);
-
-    expect(recetaService.delete).toHaveBeenCalledWith(1);
-  });
+  // Test de deleteReceta removido - las recetas son documentos médico-legales
+  // y no se pueden eliminar, solo cancelar
 
   it('should get correct estado class', () => {
     expect(component.getEstadoClass('activa')).toBe('estado-activa');

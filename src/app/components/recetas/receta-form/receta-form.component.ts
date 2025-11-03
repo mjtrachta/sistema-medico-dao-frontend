@@ -59,9 +59,14 @@ export class RecetaFormComponent implements OnInit {
         if (turno.paciente?.id) {
           this.pacienteId = turno.paciente.id;
         }
+        // Verificar que el turno tenga historia clínica
+        if (!turno.historia_clinica_id) {
+          this.error = 'El turno debe tener una historia clínica antes de crear una receta. Por favor, atienda el turno primero.';
+        }
       },
       error: (err) => {
         console.error('Error cargando turno:', err);
+        this.error = 'Error cargando información del turno';
       }
     });
   }
@@ -112,8 +117,8 @@ export class RecetaFormComponent implements OnInit {
       };
 
       // Agregar historia_clinica_id si viene del turno
-      if (this.turnoId) {
-        recetaData.historia_clinica_id = this.turnoId;
+      if (this.turno?.historia_clinica_id) {
+        recetaData.historia_clinica_id = this.turno.historia_clinica_id;
       }
 
       this.recetaService.create(recetaData).subscribe({

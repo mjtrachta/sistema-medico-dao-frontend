@@ -241,10 +241,10 @@ export class HorarioListComponent implements OnInit {
   }
 
   isAdmin(): boolean {
-    return this.authService.getUserRole() === 'admin';
+    return this.authService.isAdmin();
   }
 
   isMedico(): boolean {
-    return this.authService.getUserRole() === 'medico';
+    return this.authService.isMedico();
   }
 }

@@ -43,7 +43,7 @@
               (click)="cancelarReceta(receta.id!)">
               Cancelar
             </button>
-            <button class="btn-delete" (click)="deleteReceta(receta.id!)">Eliminar</button>
+            <!-- Las recetas son documentos médico-legales. No se pueden eliminar, solo cancelar. -->
           </td>
         </tr>
       </tbody>
@@ -121,9 +121,9 @@
                   <strong>Cantidad:</strong>
                   <span>{{ item.cantidad }}</span>
                 </div>
-                <div *ngIf="item.indicaciones" class="indicaciones">
-                  <strong>Indicaciones:</strong>
-                  <p>{{ item.indicaciones }}</p>
+                <div *ngIf="item.instrucciones" class="indicaciones">
+                  <strong>Instrucciones:</strong>
+                  <p>{{ item.instrucciones }}</p>
                 </div>
               </div>
             </div>

@@ -130,6 +130,6 @@ export class UbicacionListComponent implements OnInit {
   }
 
   isAdmin(): boolean {
-    return this.authService.getUserRole() === 'admin';
+    return this.authService.isAdmin();
   }
 }

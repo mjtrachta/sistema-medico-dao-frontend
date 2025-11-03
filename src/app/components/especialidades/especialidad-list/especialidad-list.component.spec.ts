@@ -14,7 +14,8 @@ describe('EspecialidadListComponent', () => {
     {
       id: 1,
       nombre: 'Cardiología',
-      descripcion: 'Especialidad médica del corazón'
+      descripcion: 'Especialidad médica del corazón',
+      duracion_turno_min: 30
     }
   ];
 
@@ -47,13 +48,16 @@ describe('EspecialidadListComponent', () => {
     expect(component.loading).toBeFalse();
   });
 
-  it('should handle error when loading especialidades', () => {
+  it('should handle error when loading especialidades', (done) => {
     especialidadService.getAll.and.returnValue(throwError(() => new Error('Error')));
 
     component.ngOnInit();
 
-    expect(component.error).toBe('Error cargando especialidades');
-    expect(component.loading).toBeFalse();
+    setTimeout(() => {
+      expect(component.error).toBe('Error cargando especialidades');
+      expect(component.loading).toBeFalse();
+      done();
+    }, 0);
   });
 
   it('should delete especialidad', () => {

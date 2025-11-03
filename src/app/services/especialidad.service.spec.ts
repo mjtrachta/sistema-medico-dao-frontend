@@ -12,7 +12,8 @@ describe('EspecialidadService', () => {
   const mockEspecialidad: Especialidad = {
     id: 1,
     nombre: 'Cardiología',
-    descripcion: 'Especialidad médica del corazón'
+    descripcion: 'Especialidad médica del corazón',
+    duracion_turno_min: 30
   };
 
   beforeEach(() => {

@@ -46,8 +46,11 @@ describe('TurnoListComponent', () => {
 
     turnoService = TestBed.inject(TurnoService) as jasmine.SpyObj<TurnoService>;
     router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
+    turnoService.getAll.and.returnValue(of([]));
+
     fixture = TestBed.createComponent(TurnoListComponent);
     component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
   it('should create', () => {
@@ -64,13 +67,16 @@ describe('TurnoListComponent', () => {
     expect(component.loading).toBeFalse();
   });
 
-  it('should handle error when loading turnos', () => {
+  it('should handle error when loading turnos', (done) => {
     turnoService.getAll.and.returnValue(throwError(() => new Error('Error')));
 
     component.ngOnInit();
 
-    expect(component.error).toBe('Error cargando turnos');
-    expect(component.loading).toBeFalse();
+    setTimeout(() => {
+      expect(component.error).toBe('Error cargando turnos');
+      expect(component.loading).toBeFalse();
+      done();
+    }, 0);
   });
 
   it('should confirmar turno', () => {

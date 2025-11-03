@@ -94,12 +94,12 @@ describe('PacienteService', () => {
   });
 
   it('should search by documento', () => {
-    service.searchByDocumento('12345678').subscribe(paciente => {
-      expect(paciente).toEqual(mockPaciente);
+    service.searchByDocumento('12345678').subscribe(pacientes => {
+      expect(pacientes).toEqual(jasmine.arrayContaining([jasmine.objectContaining(mockPaciente)]));
     });
 
-    const req = httpMock.expectOne(`${apiUrl}/search/12345678`);
+    const req = httpMock.expectOne(`${apiUrl}/buscar/12345678`);
     expect(req.request.method).toBe('GET');
-    req.flush(mockPaciente);
+    req.flush([mockPaciente]);
   });
 });

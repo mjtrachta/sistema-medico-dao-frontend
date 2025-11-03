@@ -33,8 +33,11 @@ describe('HistoriaListComponent', () => {
     }).compileComponents();
 
     historiaService = TestBed.inject(HistoriaClinicaService) as jasmine.SpyObj<HistoriaClinicaService>;
+    historiaService.getAll.and.returnValue(of([]));
+
     fixture = TestBed.createComponent(HistoriaListComponent);
     component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
   it('should create', () => {
@@ -51,13 +54,16 @@ describe('HistoriaListComponent', () => {
     expect(component.loading).toBeFalse();
   });
 
-  it('should handle error when loading historias', () => {
+  it('should handle error when loading historias', (done) => {
     historiaService.getAll.and.returnValue(throwError(() => new Error('Error')));
 
     component.ngOnInit();
 
-    expect(component.error).toBe('Error cargando historias clínicas');
-    expect(component.loading).toBeFalse();
+    setTimeout(() => {
+      expect(component.error).toBe('Error cargando historias clínicas');
+      expect(component.loading).toBeFalse();
+      done();
+    }, 0);
   });
 
   it('should delete historia', () => {

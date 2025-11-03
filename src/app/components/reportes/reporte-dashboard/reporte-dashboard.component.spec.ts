@@ -163,7 +163,7 @@ describe('ReporteDashboardComponent', () => {
     expect(component.reporteAsistencia).toEqual(mockReporte);
   });
 
-  it('should handle error when generating reporte', () => {
+  it('should handle error when generating reporte', (done) => {
     reporteService.turnosPorMedico.and.returnValue(throwError(() => new Error('Error')));
 
     component.reporteForm.patchValue({
@@ -175,8 +175,11 @@ describe('ReporteDashboardComponent', () => {
 
     component.generarReporte();
 
-    expect(component.error).toBe('Error generando reporte');
-    expect(component.loading).toBeFalse();
+    setTimeout(() => {
+      expect(component.error).toBe('Error generando reporte');
+      expect(component.loading).toBeFalse();
+      done();
+    }, 0);
   });
 
   it('should clear reports when tipo changes', () => {

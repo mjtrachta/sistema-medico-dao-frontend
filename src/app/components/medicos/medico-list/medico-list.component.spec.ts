@@ -14,6 +14,8 @@ describe('MedicoListComponent', () => {
   const mockMedicos: Medico[] = [
     {
       id: 1,
+      nombre: 'Juan',
+      apellido: 'Pérez',
       nombre_completo: 'Dr. Juan Pérez',
       matricula: 'MP12345',
       especialidad_id: 1,
@@ -53,13 +55,16 @@ describe('MedicoListComponent', () => {
     expect(component.loading).toBeFalse();
   });
 
-  it('should handle error when loading medicos', () => {
+  it('should handle error when loading medicos', (done) => {
     medicoService.getAll.and.returnValue(throwError(() => new Error('Error')));
 
     component.ngOnInit();
 
-    expect(component.error).toBe('Error cargando médicos');
-    expect(component.loading).toBeFalse();
+    setTimeout(() => {
+      expect(component.error).toBe('Error cargando médicos');
+      expect(component.loading).toBeFalse();
+      done();
+    }, 0);
   });
 
   it('should delete medico', () => {

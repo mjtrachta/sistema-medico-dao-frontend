@@ -13,8 +13,7 @@ describe('UbicacionService', () => {
     id: 1,
     nombre: 'Consultorio 1',
     direccion: 'Av. Siempre Viva 123',
-    piso: '1',
-    numero: '101',
+    ciudad: 'Córdoba',
     telefono: '1234567890',
     activo: true
   };

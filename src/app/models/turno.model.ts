@@ -16,6 +16,7 @@ export interface Turno {
   motivo_consulta?: string;
   observaciones?: string;
   fecha_creacion?: string;
+  historia_clinica_id?: number;  // ID de la historia clínica asociada (si el turno fue atendido)
 }
 
 export interface DisponibilidadHorario {

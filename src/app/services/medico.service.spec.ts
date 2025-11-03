@@ -11,6 +11,8 @@ describe('MedicoService', () => {
 
   const mockMedico: Medico = {
     id: 1,
+    nombre: 'Juan',
+    apellido: 'Pérez',
     nombre_completo: 'Dr. Juan Pérez',
     matricula: 'MP12345',
     especialidad_id: 1,
@@ -93,7 +95,7 @@ describe('MedicoService', () => {
       expect(medicos).toEqual(mockMedicos);
     });
 
-    const req = httpMock.expectOne(`${apiUrl}/especialidad/1`);
+    const req = httpMock.expectOne(`${apiUrl}?especialidad_id=1`);
     expect(req.request.method).toBe('GET');
     req.flush(mockMedicos);
   });

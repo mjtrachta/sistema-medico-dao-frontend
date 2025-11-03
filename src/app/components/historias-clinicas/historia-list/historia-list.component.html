@@ -1,40 +1,64 @@
 <div class="historias-container">
-  <h2>Historias Clínicas</h2>
+  <h2>Historias Clínicas - Agrupadas por Paciente</h2>
 
   <div *ngIf="loading" class="loading">Cargando...</div>
   <div *ngIf="error" class="error">{{ error }}</div>
 
-  <div *ngIf="!loading && !error && historias.length === 0" class="empty-message">
+  <div *ngIf="!loading && !error && pacientesHistorial.length === 0" class="empty-message">
     No hay historias clínicas registradas
   </div>
 
-  <div *ngIf="!loading && !error && historias.length > 0" class="table-container">
-    <table class="historias-table">
-      <thead>
-        <tr>
-          <th>Fecha</th>
-          <th>Paciente</th>
-          <th>Médico</th>
-          <th>Diagnóstico</th>
-          <th>Tratamiento</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let historia of historias">
-          <td>{{ historia.fecha }}</td>
-          <td>{{ historia.paciente?.nombre_completo }}</td>
-          <td>{{ historia.medico?.nombre_completo }}</td>
-          <td>{{ historia.diagnostico }}</td>
-          <td>{{ historia.tratamiento }}</td>
-          <td>
-            <button class="btn-view" (click)="viewHistoria(historia)">Ver</button>
-            <button class="btn-edit" (click)="editHistoria(historia.id!)">Editar</button>
-            <button class="btn-delete" (click)="deleteHistoria(historia.id!)">Eliminar</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <div *ngIf="!loading && !error && pacientesHistorial.length > 0" class="pacientes-container">
+    <!-- Cada paciente con sus historias -->
+    <div *ngFor="let pacienteHistorial of pacientesHistorial" class="paciente-card">
+      <!-- Header del paciente (clickeable para expandir/colapsar) -->
+      <div class="paciente-header" (click)="toggleExpand(pacienteHistorial)">
+        <div class="paciente-info">
+          <h3>{{ pacienteHistorial.paciente_nombre }}</h3>
+          <span class="nro-historia" *ngIf="pacienteHistorial.nro_historia_clinica">
+            HC: {{ pacienteHistorial.nro_historia_clinica }}
+          </span>
+          <span class="total-consultas">
+            {{ pacienteHistorial.historias.length }} consulta(s) registrada(s)
+          </span>
+        </div>
+        <div class="expand-icon">
+          {{ pacienteHistorial.expanded ? '▼' : '▶' }}
+        </div>
+      </div>
+
+      <!-- Timeline de historias (expandible) -->
+      <div class="historias-timeline" *ngIf="pacienteHistorial.expanded">
+        <div *ngFor="let historia of pacienteHistorial.historias; let i = index" class="historia-entry">
+          <div class="timeline-marker">
+            <div class="timeline-dot"></div>
+            <div class="timeline-line" *ngIf="i < pacienteHistorial.historias.length - 1"></div>
+          </div>
+          <div class="historia-content">
+            <div class="historia-fecha">
+              {{ historia.fecha_consulta || historia.fecha | date: 'dd/MM/yyyy HH:mm' }}
+            </div>
+            <div class="historia-details">
+              <div class="detail-row">
+                <strong>Médico:</strong>
+                <span>{{ historia.medico?.nombre_completo }}</span>
+              </div>
+              <div class="detail-row">
+                <strong>Diagnóstico:</strong>
+                <span>{{ historia.diagnostico }}</span>
+              </div>
+              <div class="detail-row" *ngIf="historia.tratamiento">
+                <strong>Tratamiento:</strong>
+                <span>{{ historia.tratamiento }}</span>
+              </div>
+            </div>
+            <button class="btn-view-small" (click)="viewHistoria(historia)">
+              Ver Detalle Completo
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Modal para ver detalles -->
@@ -43,6 +67,10 @@
       <div class="modal-header">
         <h3>Detalle de Historia Clínica</h3>
         <button class="btn-close" (click)="closeModal()">×</button>
+      </div>
+      <div class="alert-info">
+        <strong>ℹ️ Documento Médico-Legal:</strong> Las historias clínicas son documentos permanentes e inmutables.
+        No pueden ser editadas ni eliminadas para preservar la integridad del registro médico.
       </div>
       <div class="modal-body" *ngIf="selectedHistoria">
         <div class="detail-section">

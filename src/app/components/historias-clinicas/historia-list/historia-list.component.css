@@ -1,6 +1,6 @@
 .historias-container {
   padding: 20px;
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
@@ -26,40 +26,155 @@ h2 {
   font-style: italic;
 }
 
-.table-container {
-  overflow-x: auto;
+/* Contenedor de pacientes */
+.pacientes-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Card de cada paciente */
+.paciente-card {
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: box-shadow 0.3s;
 }
 
-.historias-table {
-  width: 100%;
-  border-collapse: collapse;
+.paciente-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.historias-table thead {
+/* Header del paciente (clickeable) */
+.paciente-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
   background-color: #3498db;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.paciente-header:hover {
+  background-color: #2980b9;
+}
+
+.paciente-info {
+  flex: 1;
+}
+
+.paciente-info h3 {
+  margin: 0 0 8px 0;
+  font-size: 20px;
   color: white;
 }
 
-.historias-table th {
-  padding: 12px;
-  text-align: left;
-  font-weight: 600;
+.nro-historia {
+  display: inline-block;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  margin-right: 12px;
 }
 
-.historias-table td {
-  padding: 12px;
-  border-bottom: 1px solid #ecf0f1;
+.total-consultas {
+  font-size: 14px;
+  opacity: 0.9;
 }
 
-.historias-table tbody tr:hover {
+.expand-icon {
+  font-size: 20px;
+  font-weight: bold;
+  transition: transform 0.3s;
+}
+
+/* Timeline de historias */
+.historias-timeline {
+  padding: 20px;
   background-color: #f8f9fa;
 }
 
-/* Botones de acción */
-.btn-view, .btn-edit, .btn-delete {
+.historia-entry {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.historia-entry:last-child {
+  margin-bottom: 0;
+}
+
+/* Marcador de timeline */
+.timeline-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.timeline-dot {
+  width: 16px;
+  height: 16px;
+  background-color: #3498db;
+  border: 3px solid white;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #3498db;
+  z-index: 1;
+}
+
+.timeline-line {
+  width: 2px;
+  flex: 1;
+  background-color: #bdc3c7;
+  margin-top: 4px;
+}
+
+/* Contenido de cada historia */
+.historia-content {
+  flex: 1;
+  background: white;
+  border-radius: 6px;
+  padding: 15px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.historia-fecha {
+  color: #3498db;
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #ecf0f1;
+}
+
+.historia-details {
+  margin-bottom: 12px;
+}
+
+.detail-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.detail-row strong {
+  min-width: 100px;
+  color: #34495e;
+  font-weight: 600;
+}
+
+.detail-row span {
+  color: #7f8c8d;
+  flex: 1;
+}
+
+/* Botones de acciï¿½n */
+.btn-view, .btn-edit, .btn-delete, .btn-view-small {
   padding: 6px 12px;
   margin-right: 5px;
   border: none;
@@ -75,6 +190,18 @@ h2 {
 }
 
 .btn-view:hover {
+  background-color: #2980b9;
+}
+
+.btn-view-small {
+  background-color: #3498db;
+  color: white;
+  font-size: 13px;
+  padding: 6px 14px;
+  margin: 0;
+}
+
+.btn-view-small:hover {
   background-color: #2980b9;
 }
 
@@ -207,4 +334,23 @@ h2 {
 
 .btn-cancel:hover {
   background-color: #7f8c8d;
+}
+
+/* Alerta informativa para documento mÃ©dico-legal */
+.alert-info {
+  background-color: #d1ecf1;
+  border: 1px solid #bee5eb;
+  border-left: 4px solid #17a2b8;
+  color: #0c5460;
+  padding: 12px 15px;
+  margin: 15px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.alert-info strong {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 600;
 }

@@ -8,6 +8,7 @@ import { TurnoService } from '../../../services/turno.service';
 import { MedicoService } from '../../../services/medico.service';
 import { PacienteService } from '../../../services/paciente.service';
 import { UbicacionService } from '../../../services/ubicacion.service';
+import { AuthService } from '../../../services/auth.service';
 import { Turno, DisponibilidadHorario } from '../../../models';
 
 describe('TurnoFormComponent', () => {
@@ -20,10 +21,11 @@ describe('TurnoFormComponent', () => {
   let router: jasmine.SpyObj<Router>;
 
   beforeEach(async () => {
-    const turnoServiceSpy = jasmine.createSpyObj('TurnoService', ['create', 'getDisponibilidad']);
+    const turnoServiceSpy = jasmine.createSpyObj('TurnoService', ['create', 'getDisponibilidad', 'getFechasDisponibles']);
     const medicoServiceSpy = jasmine.createSpyObj('MedicoService', ['getAll']);
     const pacienteServiceSpy = jasmine.createSpyObj('PacienteService', ['getAll']);
     const ubicacionServiceSpy = jasmine.createSpyObj('UbicacionService', ['getAll']);
+    const authServiceSpy = jasmine.createSpyObj('AuthService', ['isPaciente', 'isAdmin', 'isRecepcionista']);
     const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     await TestBed.configureTestingModule({
@@ -33,6 +35,7 @@ describe('TurnoFormComponent', () => {
         { provide: MedicoService, useValue: medicoServiceSpy },
         { provide: PacienteService, useValue: pacienteServiceSpy },
         { provide: UbicacionService, useValue: ubicacionServiceSpy },
+        { provide: AuthService, useValue: authServiceSpy },
         { provide: Router, useValue: routerSpy }
       ]
     }).compileComponents();
@@ -46,6 +49,8 @@ describe('TurnoFormComponent', () => {
     medicoService.getAll.and.returnValue(of([]));
     pacienteService.getAll.and.returnValue(of([]));
     ubicacionService.getAll.and.returnValue(of([]));
+    turnoService.getFechasDisponibles.and.returnValue(of({ fechas_disponibles: [] }));
+    turnoService.getDisponibilidad.and.returnValue(of({ fecha: '', horarios_disponibles: [] }));
 
     fixture = TestBed.createComponent(TurnoFormComponent);
     component = fixture.componentInstance;

@@ -35,8 +35,11 @@ describe('PacienteListComponent', () => {
     }).compileComponents();
 
     pacienteService = TestBed.inject(PacienteService) as jasmine.SpyObj<PacienteService>;
+    pacienteService.getAll.and.returnValue(of([]));
+
     fixture = TestBed.createComponent(PacienteListComponent);
     component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
   it('should create', () => {
@@ -53,13 +56,16 @@ describe('PacienteListComponent', () => {
     expect(component.loading).toBeFalse();
   });
 
-  it('should handle error when loading pacientes', () => {
+  it('should handle error when loading pacientes', (done) => {
     pacienteService.getAll.and.returnValue(throwError(() => new Error('Error')));
 
     component.ngOnInit();
 
-    expect(component.error).toBe('Error cargando pacientes');
-    expect(component.loading).toBeFalse();
+    setTimeout(() => {
+      expect(component.error).toBe('Error cargando pacientes');
+      expect(component.loading).toBeFalse();
+      done();
+    }, 0);
   });
 
   it('should delete paciente', () => {

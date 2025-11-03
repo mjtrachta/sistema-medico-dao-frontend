@@ -60,8 +60,8 @@
         </a>
       </li>
 
-      <!-- Historias Clínicas - admin, médicos y pacientes -->
-      <li *ngIf="authService.hasRole('admin', 'medico', 'paciente')">
+      <!-- Historias Clínicas - solo admin y pacientes (médicos ven desde detalle del paciente) -->
+      <li *ngIf="authService.hasRole('admin', 'paciente')">
         <a routerLink="/historias-clinicas" routerLinkActive="active" (click)="menuOpen = false">
           Historias Clínicas
         </a>
