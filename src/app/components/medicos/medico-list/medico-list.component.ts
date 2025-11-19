@@ -25,6 +25,11 @@ export class MedicoListComponent implements OnInit {
   editTelefono: string = '';
   editEspecialidadId: number | null = null;
 
+  // Variables para formulario modal
+  showForm = false;
+  editMode = false;
+  medicoForm: any = this.resetForm();
+
   constructor(
     private medicoService: MedicoService,
     private especialidadService: EspecialidadService
@@ -117,5 +122,81 @@ export class MedicoListComponent implements OnInit {
     this.editEmail = '';
     this.editTelefono = '';
     this.editEspecialidadId = null;
+  }
+
+  resetForm(): any {
+    return {
+      nombre: '',
+      apellido: '',
+      matricula: '',
+      especialidad_id: null,
+      telefono: '',
+      email: ''
+    };
+  }
+
+  openForm(medico?: Medico): void {
+    if (medico) {
+      this.editMode = true;
+      this.medicoForm = { 
+        nombre: medico.nombre || '',
+        apellido: medico.apellido || '',
+        matricula: medico.matricula,
+        especialidad_id: medico.especialidad?.id || null,
+        telefono: medico.telefono || '',
+        email: medico.email || ''
+      };
+    } else {
+      this.editMode = false;
+      this.medicoForm = this.resetForm();
+    }
+    this.showForm = true;
+    this.error = null;
+    this.success = null;
+  }
+
+  closeForm(): void {
+    this.showForm = false;
+    this.medicoForm = this.resetForm();
+    this.error = null;
+  }
+
+  saveMedico(): void {
+    if (!this.medicoForm.nombre || !this.medicoForm.apellido || !this.medicoForm.matricula || !this.medicoForm.especialidad_id) {
+      this.error = 'Por favor complete todos los campos requeridos';
+      return;
+    }
+
+    this.loading = true;
+    this.error = null;
+
+    const medicoData = {
+      nombre: this.medicoForm.nombre,
+      apellido: this.medicoForm.apellido,
+      matricula: this.medicoForm.matricula,
+      especialidad_id: this.medicoForm.especialidad_id,
+      telefono: this.medicoForm.telefono || null,
+      email: this.medicoForm.email || null
+    };
+
+    if (this.editMode) {
+      // TODO: Implementar edición completa si es necesario
+      this.loading = false;
+    } else {
+      this.medicoService.create(medicoData).subscribe({
+        next: (data) => {
+          this.success = 'Médico creado exitosamente';
+          this.closeForm();
+          this.loadMedicos();
+          this.loading = false;
+          setTimeout(() => this.success = null, 3000);
+        },
+        error: (err) => {
+          this.error = 'Error al crear el médico';
+          console.error(err);
+          this.loading = false;
+        }
+      });
+    }
   }
 }

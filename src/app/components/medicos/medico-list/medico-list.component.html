@@ -1,7 +1,12 @@
 <div class="medicos-container">
-  <h2>Gestión de Médicos</h2>
+  <div class="header">
+    <h2>Gestión de Médicos</h2>
+    <button class="btn btn-primary" (click)="openForm()">
+      Nuevo Médico
+    </button>
+  </div>
 
-  <div *ngIf="loading" class="loading">Cargando...</div>
+  <div *ngIf="loading && !showForm" class="loading">Cargando...</div>
   <div *ngIf="error" class="error">{{ error }}</div>
   <div *ngIf="success" class="success">{{ success }}</div>
 
@@ -81,5 +86,113 @@
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- Modal Formulario -->
+  <div *ngIf="showForm" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>{{ editMode ? 'Editar Médico' : 'Nuevo Médico' }}</h3>
+        <button class="close-btn" (click)="closeForm()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <form (ngSubmit)="saveMedico()">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nombre">Nombre *</label>
+              <input
+                type="text"
+                id="nombre"
+                [(ngModel)]="medicoForm.nombre"
+                name="nombre"
+                class="form-control"
+                required
+                placeholder="Ej: Juan"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="apellido">Apellido *</label>
+              <input
+                type="text"
+                id="apellido"
+                [(ngModel)]="medicoForm.apellido"
+                name="apellido"
+                class="form-control"
+                required
+                placeholder="Ej: Pérez"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="matricula">Matrícula *</label>
+              <input
+                type="text"
+                id="matricula"
+                [(ngModel)]="medicoForm.matricula"
+                name="matricula"
+                class="form-control"
+                required
+                placeholder="Ej: MP-12345"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="especialidad_id">Especialidad *</label>
+              <select
+                id="especialidad_id"
+                [(ngModel)]="medicoForm.especialidad_id"
+                name="especialidad_id"
+                class="form-control"
+                required
+              >
+                <option value="">Seleccionar especialidad</option>
+                <option *ngFor="let especialidad of especialidades" [value]="especialidad.id">
+                  {{ especialidad.nombre }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                [(ngModel)]="medicoForm.email"
+                name="email"
+                class="form-control"
+                placeholder="Ej: juan.perez@hospital.com"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="telefono">Teléfono</label>
+              <input
+                type="tel"
+                id="telefono"
+                [(ngModel)]="medicoForm.telefono"
+                name="telefono"
+                class="form-control"
+                placeholder="Ej: 351-1234567"
+              />
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="closeForm()">
+              Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="loading">
+              {{ loading ? 'Guardando...' : 'Guardar' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
