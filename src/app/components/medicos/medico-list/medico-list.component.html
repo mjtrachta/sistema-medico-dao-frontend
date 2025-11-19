@@ -3,6 +3,7 @@
 
   <div *ngIf="loading" class="loading">Cargando...</div>
   <div *ngIf="error" class="error">{{ error }}</div>
+  <div *ngIf="success" class="success">{{ success }}</div>
 
   <div *ngIf="!loading && !error" class="table-container">
     <table class="medicos-table">
@@ -20,11 +21,61 @@
         <tr *ngFor="let medico of medicos">
           <td>{{ medico.nombre_completo }}</td>
           <td>{{ medico.matricula }}</td>
-          <td>{{ medico.especialidad?.nombre }}</td>
-          <td>{{ medico.email }}</td>
-          <td>{{ medico.telefono }}</td>
           <td>
-            <button class="btn-edit">Editar</button>
+            <select
+              *ngIf="editandoMedico === medico.id"
+              [(ngModel)]="editEspecialidadId"
+              class="input-edit"
+            >
+              <option value="">Seleccionar especialidad</option>
+              <option *ngFor="let especialidad of especialidades" [value]="especialidad.id">
+                {{ especialidad.nombre }}
+              </option>
+            </select>
+            <span *ngIf="editandoMedico !== medico.id">{{ medico.especialidad?.nombre }}</span>
+          </td>
+          <td>
+            <input
+              *ngIf="editandoMedico === medico.id"
+              type="email"
+              [(ngModel)]="editEmail"
+              class="input-edit"
+              placeholder="Email"
+            />
+            <span *ngIf="editandoMedico !== medico.id">{{ medico.email }}</span>
+          </td>
+          <td>
+            <input
+              *ngIf="editandoMedico === medico.id"
+              type="text"
+              [(ngModel)]="editTelefono"
+              class="input-edit"
+              placeholder="Teléfono"
+            />
+            <span *ngIf="editandoMedico !== medico.id">{{ medico.telefono }}</span>
+          </td>
+          <td class="acciones-cell">
+            <button
+              *ngIf="editandoMedico !== medico.id"
+              class="btn-edit"
+              (click)="startEdit(medico)"
+            >
+              Editar
+            </button>
+            <div *ngIf="editandoMedico === medico.id" class="edit-buttons">
+              <button
+                class="btn-save btn-small"
+                (click)="saveEdit(medico)"
+              >
+                Guardar
+              </button>
+              <button
+                class="btn-cancel btn-small"
+                (click)="cancelEdit()"
+              >
+                Cancelar
+              </button>
+            </div>
             <button class="btn-delete" (click)="deleteMedico(medico.id!)">Eliminar</button>
           </td>
         </tr>
