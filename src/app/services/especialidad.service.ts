@@ -20,7 +20,7 @@ export class EspecialidadService {
     return this.http.get<Especialidad>(`${this.apiUrl}/${id}`);
   }
 
-  create(especialidad: Especialidad): Observable<Especialidad> {
+  create(especialidad: Partial<Especialidad>): Observable<Especialidad> {
     return this.http.post<Especialidad>(this.apiUrl, especialidad);
   }
 
