@@ -99,22 +99,8 @@ export class HistoriaListComponent implements OnInit {
     this.showModal = true;
   }
 
-  editHistoria(id: number) {
-    // Navegar al formulario de edición si existe, o abrir en modal
-    this.router.navigate(['/historias-clinicas', id, 'editar']);
-  }
-
   closeModal() {
     this.showModal = false;
     this.selectedHistoria = null;
-  }
-
-  deleteHistoria(id: number) {
-    if (confirm('¿Está seguro de eliminar esta historia clínica?')) {
-      this.historiaService.delete(id).subscribe({
-        next: () => this.loadHistorias(),
-        error: (err: any) => console.error(err)
-      });
-    }
   }
 }

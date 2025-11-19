@@ -25,8 +25,8 @@
         </a>
       </li>
 
-      <!-- Mis Pacientes - solo médicos y admin -->
-      <li *ngIf="authService.hasRole('medico', 'admin')">
+      <!-- Mis Pacientes - solo médicos -->
+      <li *ngIf="authService.hasRole('medico')">
         <a routerLink="/pacientes/mis-pacientes" routerLinkActive="active" (click)="menuOpen = false">
           Mis Pacientes
         </a>
@@ -53,22 +53,22 @@
         </a>
       </li>
 
-      <!-- Horarios - médicos y admin -->
-      <li *ngIf="authService.hasRole('medico', 'admin')">
+      <!-- Horarios - solo médicos -->
+      <li *ngIf="authService.hasRole('medico')">
         <a routerLink="/horarios" routerLinkActive="active" (click)="menuOpen = false">
           Horarios
         </a>
       </li>
 
-      <!-- Historias Clínicas - solo admin y pacientes (médicos ven desde detalle del paciente) -->
-      <li *ngIf="authService.hasRole('admin', 'paciente')">
+      <!-- Historias Clínicas - solo pacientes (médicos ven desde detalle del paciente) -->
+      <li *ngIf="authService.hasRole('paciente')">
         <a routerLink="/historias-clinicas" routerLinkActive="active" (click)="menuOpen = false">
           Historias Clínicas
         </a>
       </li>
 
-      <!-- Recetas - admin, médicos y pacientes -->
-      <li *ngIf="authService.hasRole('admin', 'medico', 'paciente')">
+      <!-- Recetas - médicos y pacientes -->
+      <li *ngIf="authService.hasRole('medico', 'paciente')">
         <a routerLink="/recetas" routerLinkActive="active" (click)="menuOpen = false">
           Recetas
         </a>

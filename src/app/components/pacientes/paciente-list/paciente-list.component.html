@@ -3,6 +3,7 @@
 
   <div *ngIf="loading" class="loading">Cargando...</div>
   <div *ngIf="error" class="error">{{ error }}</div>
+  <div *ngIf="success" class="success">{{ success }}</div>
 
   <div *ngIf="!loading && !error" class="table-container">
     <table class="pacientes-table">
@@ -21,11 +22,46 @@
           <td>{{ paciente.nro_historia_clinica }}</td>
           <td>{{ paciente.nombre_completo }}</td>
           <td>{{ paciente.tipo_documento }} {{ paciente.nro_documento }}</td>
-          <td>{{ paciente.email }}</td>
-          <td>{{ paciente.telefono }}</td>
           <td>
-            <button class="btn-edit">Editar</button>
-            <button class="btn-delete" (click)="deletePaciente(paciente.id!)">Eliminar</button>
+            <input
+              *ngIf="editandoPaciente === paciente.id"
+              type="email"
+              [(ngModel)]="editEmail"
+              class="input-edit"
+            />
+            <span *ngIf="editandoPaciente !== paciente.id">{{ paciente.email }}</span>
+          </td>
+          <td>
+            <input
+              *ngIf="editandoPaciente === paciente.id"
+              type="text"
+              [(ngModel)]="editTelefono"
+              class="input-edit"
+            />
+            <span *ngIf="editandoPaciente !== paciente.id">{{ paciente.telefono }}</span>
+          </td>
+          <td>
+            <button
+              *ngIf="editandoPaciente !== paciente.id"
+              class="btn-edit"
+              (click)="startEdit(paciente)"
+            >
+              Editar Contacto
+            </button>
+            <button
+              *ngIf="editandoPaciente === paciente.id"
+              class="btn-save"
+              (click)="saveEdit(paciente)"
+            >
+              Guardar
+            </button>
+            <button
+              *ngIf="editandoPaciente === paciente.id"
+              class="btn-cancel"
+              (click)="cancelEdit()"
+            >
+              Cancelar
+            </button>
           </td>
         </tr>
       </tbody>

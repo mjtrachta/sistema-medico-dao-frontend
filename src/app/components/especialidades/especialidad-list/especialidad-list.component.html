@@ -3,23 +3,125 @@
 
   <div *ngIf="loading" class="loading">Cargando...</div>
   <div *ngIf="error" class="error">{{ error }}</div>
+  <div *ngIf="success" class="success">{{ success }}</div>
 
+  <!-- Formulario para crear nueva especialidad -->
+  <div class="form-container" *ngIf="!loading">
+    <h3>{{ modoCrear ? 'Nueva Especialidad' : 'Ocultar Formulario' }}</h3>
+    <button class="btn-toggle" (click)="toggleFormulario()">
+      {{ modoCrear ? 'Cancelar' : '+ Nueva Especialidad' }}
+    </button>
+
+    <form *ngIf="modoCrear" class="form-nueva" (ngSubmit)="crearEspecialidad()">
+      <div class="form-group">
+        <label for="nombre">Nombre *</label>
+        <input
+          type="text"
+          id="nombre"
+          [(ngModel)]="nuevaEspecialidad.nombre"
+          name="nombre"
+          required
+          placeholder="Ej: Cardiología"
+        />
+      </div>
+      <div class="form-group">
+        <label for="descripcion">Descripción</label>
+        <textarea
+          id="descripcion"
+          [(ngModel)]="nuevaEspecialidad.descripcion"
+          name="descripcion"
+          rows="3"
+          placeholder="Descripción de la especialidad"
+        ></textarea>
+      </div>
+      <div class="form-group">
+        <label for="duracion">Duración de Turno (minutos)</label>
+        <input
+          type="number"
+          id="duracion"
+          [(ngModel)]="nuevaEspecialidad.duracion_turno_min"
+          name="duracion"
+          min="15"
+          step="5"
+        />
+      </div>
+      <button type="submit" class="btn-save" [disabled]="!nuevaEspecialidad.nombre">
+        Crear Especialidad
+      </button>
+    </form>
+  </div>
+
+  <!-- Tabla de especialidades -->
   <div *ngIf="!loading && !error" class="table-container">
     <table class="especialidades-table">
       <thead>
         <tr>
           <th>Nombre</th>
           <th>Descripción</th>
+          <th>Duración Turno</th>
           <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let especialidad of especialidades">
-          <td>{{ especialidad.nombre }}</td>
-          <td>{{ especialidad.descripcion }}</td>
           <td>
-            <button class="btn-edit">Editar</button>
-            <button class="btn-delete" (click)="deleteEspecialidad(especialidad.id!)">Eliminar</button>
+            <input
+              *ngIf="editandoEspecialidad === especialidad.id"
+              type="text"
+              [(ngModel)]="editNombre"
+              class="input-edit"
+            />
+            <span *ngIf="editandoEspecialidad !== especialidad.id">{{ especialidad.nombre }}</span>
+          </td>
+          <td>
+            <textarea
+              *ngIf="editandoEspecialidad === especialidad.id"
+              [(ngModel)]="editDescripcion"
+              class="input-edit"
+              rows="2"
+            ></textarea>
+            <span *ngIf="editandoEspecialidad !== especialidad.id">{{ especialidad.descripcion }}</span>
+          </td>
+          <td>
+            <input
+              *ngIf="editandoEspecialidad === especialidad.id"
+              type="number"
+              [(ngModel)]="editDuracion"
+              class="input-edit-small"
+              min="15"
+              step="5"
+            />
+            <span *ngIf="editandoEspecialidad !== especialidad.id">{{ especialidad.duracion_turno_min }} min</span>
+          </td>
+          <td>
+            <button
+              *ngIf="editandoEspecialidad !== especialidad.id"
+              class="btn-edit"
+              (click)="startEdit(especialidad)"
+            >
+              Editar
+            </button>
+            <button
+              *ngIf="editandoEspecialidad === especialidad.id"
+              class="btn-save"
+              (click)="saveEdit(especialidad)"
+            >
+              Guardar
+            </button>
+            <button
+              *ngIf="editandoEspecialidad === especialidad.id"
+              class="btn-cancel"
+              (click)="cancelEdit()"
+            >
+              Cancelar
+            </button>
+            <button
+              *ngIf="editandoEspecialidad !== especialidad.id"
+              class="btn-delete"
+              (click)="deleteEspecialidad(especialidad.id!)"
+            >
+              Eliminar
+            </button>
           </td>
         </tr>
       </tbody>
