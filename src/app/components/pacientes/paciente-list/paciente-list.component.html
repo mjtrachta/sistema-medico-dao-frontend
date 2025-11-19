@@ -1,7 +1,12 @@
 <div class="pacientes-container">
-  <h2>Gestión de Pacientes</h2>
+  <div class="header">
+    <h2>Gestión de Pacientes</h2>
+    <button class="btn btn-primary" (click)="openForm()">
+      Nuevo Paciente
+    </button>
+  </div>
 
-  <div *ngIf="loading" class="loading">Cargando...</div>
+  <div *ngIf="loading && !showForm" class="loading">Cargando...</div>
   <div *ngIf="error" class="error">{{ error }}</div>
   <div *ngIf="success" class="success">{{ success }}</div>
 
@@ -40,7 +45,7 @@
             />
             <span *ngIf="editandoPaciente !== paciente.id">{{ paciente.telefono }}</span>
           </td>
-          <td>
+          <td class="acciones-cell">
             <button
               *ngIf="editandoPaciente !== paciente.id"
               class="btn-edit"
@@ -48,23 +53,216 @@
             >
               Editar Contacto
             </button>
-            <button
-              *ngIf="editandoPaciente === paciente.id"
-              class="btn-save"
-              (click)="saveEdit(paciente)"
-            >
-              Guardar
-            </button>
-            <button
-              *ngIf="editandoPaciente === paciente.id"
-              class="btn-cancel"
-              (click)="cancelEdit()"
-            >
-              Cancelar
-            </button>
+            <div *ngIf="editandoPaciente === paciente.id" class="edit-buttons">
+              <button
+                class="btn-save btn-small"
+                (click)="saveEdit(paciente)"
+              >
+                Guardar
+              </button>
+              <button
+                class="btn-cancel btn-small"
+                (click)="cancelEdit()"
+              >
+                Cancelar
+              </button>
+            </div>
+            <button class="btn-delete" (click)="deletePaciente(paciente.id!)">Eliminar</button>
           </td>
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- Modal Formulario -->
+  <div *ngIf="showForm" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>{{ editMode ? 'Editar Paciente' : 'Nuevo Paciente' }}</h3>
+        <button class="close-btn" (click)="closeForm()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <form (ngSubmit)="savePaciente()">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="nombre">Nombre *</label>
+              <input
+                type="text"
+                id="nombre"
+                [(ngModel)]="pacienteForm.nombre"
+                name="nombre"
+                class="form-control"
+                required
+                placeholder="Ej: Juan"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="apellido">Apellido *</label>
+              <input
+                type="text"
+                id="apellido"
+                [(ngModel)]="pacienteForm.apellido"
+                name="apellido"
+                class="form-control"
+                required
+                placeholder="Ej: Pérez"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="tipo_documento">Tipo Documento *</label>
+              <select
+                id="tipo_documento"
+                [(ngModel)]="pacienteForm.tipo_documento"
+                name="tipo_documento"
+                class="form-control"
+                required
+              >
+                <option value="">Seleccionar tipo</option>
+                <option value="DNI">DNI</option>
+                <option value="CI">Cédula de Identidad</option>
+                <option value="LE">Libreta de Enrolamiento</option>
+                <option value="LC">Libreta Cívica</option>
+                <option value="Pasaporte">Pasaporte</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="nro_documento">Número Documento *</label>
+              <input
+                type="text"
+                id="nro_documento"
+                [(ngModel)]="pacienteForm.nro_documento"
+                name="nro_documento"
+                class="form-control"
+                required
+                placeholder="Ej: 12345678"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fecha_nacimiento">Fecha Nacimiento *</label>
+              <input
+                type="date"
+                id="fecha_nacimiento"
+                [(ngModel)]="pacienteForm.fecha_nacimiento"
+                name="fecha_nacimiento"
+                class="form-control"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="genero">Género *</label>
+              <select
+                id="genero"
+                [(ngModel)]="pacienteForm.genero"
+                name="genero"
+                class="form-control"
+                required
+              >
+                <option value="">Seleccionar género</option>
+                <option value="masculino">Masculino</option>
+                <option value="femenino">Femenino</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                [(ngModel)]="pacienteForm.email"
+                name="email"
+                class="form-control"
+                placeholder="Ej: juan.perez@email.com"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="telefono">Teléfono</label>
+              <input
+                type="tel"
+                id="telefono"
+                [(ngModel)]="pacienteForm.telefono"
+                name="telefono"
+                class="form-control"
+                placeholder="Ej: 351-1234567"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="direccion">Dirección</label>
+              <input
+                type="text"
+                id="direccion"
+                [(ngModel)]="pacienteForm.direccion"
+                name="direccion"
+                class="form-control"
+                placeholder="Ej: Av. Colón 1234"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="ciudad">Ciudad</label>
+              <input
+                type="text"
+                id="ciudad"
+                [(ngModel)]="pacienteForm.ciudad"
+                name="ciudad"
+                class="form-control"
+                placeholder="Ej: Córdoba"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="obra_social">Obra Social</label>
+              <input
+                type="text"
+                id="obra_social"
+                [(ngModel)]="pacienteForm.obra_social"
+                name="obra_social"
+                class="form-control"
+                placeholder="Ej: OSDE"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="nro_afiliado">Número Afiliado</label>
+              <input
+                type="text"
+                id="nro_afiliado"
+                [(ngModel)]="pacienteForm.nro_afiliado"
+                name="nro_afiliado"
+                class="form-control"
+                placeholder="Ej: 123456789"
+              />
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="closeForm()">
+              Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="loading">
+              {{ loading ? 'Guardando...' : 'Guardar' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
