@@ -49,9 +49,14 @@
       </div>
     </div>
 
-    <button type="submit" class="btn-generar" [disabled]="!reporteForm.valid || loading">
-      {{ loading ? 'Generando...' : 'Generar Reporte' }}
-    </button>
+    <div class="button-group">
+      <button type="submit" class="btn-generar" [disabled]="!reporteForm.valid || loading">
+        {{ loading ? 'Generando...' : 'Generar Reporte' }}
+      </button>
+      <button type="button" class="btn-pdf" [disabled]="!reporteForm.valid" (click)="descargarPDF()">
+        📄 Descargar PDF
+      </button>
+    </div>
   </form>
 
   <!-- Reporte de Turnos por Médico -->

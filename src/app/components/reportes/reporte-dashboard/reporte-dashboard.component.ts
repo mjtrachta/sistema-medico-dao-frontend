@@ -164,4 +164,39 @@ export class ReporteDashboardComponent implements OnInit {
       }
     }
   }
+
+  // ==========================================
+  // MÉTODOS DESCARGA PDF
+  // ==========================================
+
+  descargarPDF() {
+    const fechaInicio = this.reporteForm.value.fecha_inicio;
+    const fechaFin = this.reporteForm.value.fecha_fin;
+
+    switch (this.tipoReporte) {
+      case 'turnos_medico':
+        const medicoId = this.reporteForm.value.medico_id;
+        if (medicoId && fechaInicio && fechaFin) {
+          this.reporteService.descargarPdfTurnosPorMedico(medicoId, fechaInicio, fechaFin);
+        }
+        break;
+
+      case 'turnos_especialidad':
+        const especialidadId = this.reporteForm.value.especialidad_id;
+        if (especialidadId && fechaInicio && fechaFin) {
+          this.reporteService.descargarPdfTurnosPorEspecialidad(especialidadId, fechaInicio, fechaFin);
+        }
+        break;
+
+      case 'pacientes_atendidos':
+        if (fechaInicio && fechaFin) {
+          this.reporteService.descargarPdfPacientesAtendidos(fechaInicio, fechaFin);
+        }
+        break;
+
+      case 'estadisticas_asistencia':
+        this.reporteService.descargarPdfEstadisticasAsistencia(fechaInicio, fechaFin);
+        break;
+    }
+  }
 }

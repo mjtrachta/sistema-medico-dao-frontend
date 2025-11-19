@@ -49,7 +49,51 @@ export class ReporteService {
     if (fechaInicio) params = params.set('fecha_inicio', fechaInicio);
     if (fechaFin) params = params.set('fecha_fin', fechaFin);
     if (medicoId) params = params.set('medico_id', medicoId.toString());
-    
+
     return this.http.get<ReporteEstadisticasAsistencia>(`${this.apiUrl}/estadisticas-asistencia`, { params });
+  }
+
+  // ==========================================
+  // MÉTODOS DE DESCARGA PDF
+  // ==========================================
+
+  descargarPdfTurnosPorMedico(medicoId: number, fechaInicio: string, fechaFin: string): void {
+    const params = new HttpParams()
+      .set('fecha_inicio', fechaInicio)
+      .set('fecha_fin', fechaFin);
+
+    const url = `${this.apiUrl}/turnos-por-medico/${medicoId}/pdf?${params.toString()}`;
+    window.open(url, '_blank');
+  }
+
+  descargarPdfTurnosPorEspecialidad(especialidadId: number, fechaInicio: string, fechaFin: string): void {
+    const params = new HttpParams()
+      .set('fecha_inicio', fechaInicio)
+      .set('fecha_fin', fechaFin);
+
+    const url = `${this.apiUrl}/turnos-por-especialidad/${especialidadId}/pdf?${params.toString()}`;
+    window.open(url, '_blank');
+  }
+
+  descargarPdfPacientesAtendidos(fechaInicio: string, fechaFin: string, medicoId?: number, especialidadId?: number): void {
+    let params = new HttpParams()
+      .set('fecha_inicio', fechaInicio)
+      .set('fecha_fin', fechaFin);
+
+    if (medicoId) params = params.set('medico_id', medicoId.toString());
+    if (especialidadId) params = params.set('especialidad_id', especialidadId.toString());
+
+    const url = `${this.apiUrl}/pacientes-atendidos/pdf?${params.toString()}`;
+    window.open(url, '_blank');
+  }
+
+  descargarPdfEstadisticasAsistencia(fechaInicio?: string, fechaFin?: string, medicoId?: number): void {
+    let params = new HttpParams();
+    if (fechaInicio) params = params.set('fecha_inicio', fechaInicio);
+    if (fechaFin) params = params.set('fecha_fin', fechaFin);
+    if (medicoId) params = params.set('medico_id', medicoId.toString());
+
+    const url = `${this.apiUrl}/estadisticas-asistencia/pdf?${params.toString()}`;
+    window.open(url, '_blank');
   }
 }
