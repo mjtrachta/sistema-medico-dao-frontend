@@ -31,9 +31,9 @@ export interface ReporteTurnosPorEspecialidad {
   especialidad_nombre?: string;
   fecha_inicio?: string;
   fecha_fin?: string;
-  total_turnos: number;
-  total_medicos: number;
-  medicos_turnos: Array<{
+  total_turnos?: number;
+  total_medicos?: number;
+  medicos_turnos?: Array<{
     medico_id: number;
     medico_nombre: string;
     total: number;
@@ -42,6 +42,26 @@ export interface ReporteTurnosPorEspecialidad {
     id: number;
     nombre: string;
   };
+  periodo?: {
+    inicio: string;
+    fin: string;
+  };
+  turnos?: Array<{
+    id: number;
+    codigo_turno: string;
+    fecha: string;
+    hora: string;
+    estado: string;
+    especialidad: string;
+    motivo_consulta: string;
+    ubicacion: string;
+    medico: {
+      nombre: string;
+    };
+    paciente: {
+      nombre: string;
+    };
+  }>;
   completados?: number;
   cancelados?: number;
   pendientes?: number;

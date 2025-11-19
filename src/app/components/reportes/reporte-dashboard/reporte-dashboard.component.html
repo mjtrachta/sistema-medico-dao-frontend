@@ -60,25 +60,54 @@
     <div class="reporte-stats">
       <div class="stat-card">
         <span class="stat-label">Total de Turnos</span>
-        <span class="stat-value">{{ reporteTurnosMedico.total_turnos }}</span>
+        <span class="stat-value">{{ reporteTurnosMedico.estadisticas?.total || reporteTurnosMedico.total_turnos || 0 }}</span>
       </div>
       <div class="stat-card">
         <span class="stat-label">Confirmados</span>
-        <span class="stat-value">{{ reporteTurnosMedico.confirmados }}</span>
+        <span class="stat-value">{{ reporteTurnosMedico.confirmados || 0 }}</span>
       </div>
       <div class="stat-card">
         <span class="stat-label">Completados</span>
-        <span class="stat-value">{{ reporteTurnosMedico.completados }}</span>
+        <span class="stat-value">{{ reporteTurnosMedico.estadisticas?.completados || reporteTurnosMedico.completados || 0 }}</span>
       </div>
       <div class="stat-card">
         <span class="stat-label">Cancelados</span>
-        <span class="stat-value">{{ reporteTurnosMedico.cancelados }}</span>
+        <span class="stat-value">{{ reporteTurnosMedico.estadisticas?.cancelados || reporteTurnosMedico.cancelados || 0 }}</span>
       </div>
       <div class="stat-card">
-        <span class="stat-label">Ausentes</span>
-        <span class="stat-value">{{ reporteTurnosMedico.ausentes }}</span>
+        <span class="stat-label">Pendientes</span>
+        <span class="stat-value">{{ reporteTurnosMedico.estadisticas?.pendientes || reporteTurnosMedico.ausentes || 0 }}</span>
       </div>
     </div>
+    <div *ngIf="(!reporteTurnosMedico.estadisticas?.total && !reporteTurnosMedico.total_turnos) || (reporteTurnosMedico.estadisticas?.total === 0 && reporteTurnosMedico.total_turnos === 0)" class="no-data">
+      <p>No se encontraron turnos para el período seleccionado.</p>
+    </div>
+    
+    <!-- Tabla de detalle de turnos -->
+    <table class="reporte-table" *ngIf="reporteTurnosMedico.turnos && reporteTurnosMedico.turnos.length > 0">
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Fecha</th>
+          <th>Hora</th>
+          <th>Paciente</th>
+          <th>Motivo</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let turno of reporteTurnosMedico.turnos">
+          <td>{{ turno.codigo_turno }}</td>
+          <td>{{ turno.fecha | date:'dd/MM/yyyy' }}</td>
+          <td>{{ turno.hora }}</td>
+          <td>{{ turno.paciente?.nombre_completo }}</td>
+          <td>{{ turno.motivo_consulta }}</td>
+          <td>
+            <span [class]="'estado-' + turno.estado">{{ turno.estado }}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
   <!-- Reporte de Turnos por Especialidad -->
@@ -87,27 +116,52 @@
     <div class="reporte-stats">
       <div class="stat-card">
         <span class="stat-label">Total de Turnos</span>
-        <span class="stat-value">{{ reporteTurnosEspecialidad.total_turnos }}</span>
+        <span class="stat-value">{{ reporteTurnosEspecialidad.turnos?.length || 0 }}</span>
       </div>
       <div class="stat-card">
-        <span class="stat-label">Médicos Activos</span>
-        <span class="stat-value">{{ reporteTurnosEspecialidad.total_medicos }}</span>
+        <span class="stat-label">Completados</span>
+        <span class="stat-value">{{ getEstadisticasEspecialidad(reporteTurnosEspecialidad.turnos || []).completados }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Cancelados</span>
+        <span class="stat-value">{{ getEstadisticasEspecialidad(reporteTurnosEspecialidad.turnos || []).cancelados }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Ausentes</span>
+        <span class="stat-value">{{ getEstadisticasEspecialidad(reporteTurnosEspecialidad.turnos || []).ausentes }}</span>
       </div>
     </div>
-    <table class="reporte-table" *ngIf="reporteTurnosEspecialidad.medicos_turnos.length > 0">
+    
+    <!-- Tabla de detalle de turnos -->
+    <table class="reporte-table" *ngIf="reporteTurnosEspecialidad.turnos && reporteTurnosEspecialidad.turnos.length > 0">
       <thead>
         <tr>
+          <th>Código</th>
+          <th>Fecha</th>
+          <th>Hora</th>
           <th>Médico</th>
-          <th>Total Turnos</th>
+          <th>Paciente</th>
+          <th>Motivo</th>
+          <th>Estado</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let medico of reporteTurnosEspecialidad.medicos_turnos">
-          <td>{{ medico.medico_nombre }}</td>
-          <td>{{ medico.total }}</td>
+        <tr *ngFor="let turno of reporteTurnosEspecialidad.turnos">
+          <td>{{ turno.codigo_turno }}</td>
+          <td>{{ turno.fecha | date:'dd/MM/yyyy' }}</td>
+          <td>{{ turno.hora }}</td>
+          <td>{{ turno.medico.nombre }}</td>
+          <td>{{ turno.paciente.nombre }}</td>
+          <td>{{ turno.motivo_consulta }}</td>
+          <td>
+            <span [class]="'estado-' + turno.estado">{{ turno.estado }}</span>
+          </td>
         </tr>
       </tbody>
     </table>
+    <div *ngIf="!reporteTurnosEspecialidad.turnos || reporteTurnosEspecialidad.turnos.length === 0" class="no-data">
+      <p>No se encontraron turnos para la especialidad en el período seleccionado.</p>
+    </div>
   </div>
 
   <!-- Reporte de Pacientes Atendidos -->
@@ -116,10 +170,10 @@
     <div class="reporte-stats">
       <div class="stat-card">
         <span class="stat-label">Total de Pacientes</span>
-        <span class="stat-value">{{ reportePacientes.total_pacientes }}</span>
+        <span class="stat-value">{{ reportePacientes.total_pacientes || 0 }}</span>
       </div>
     </div>
-    <table class="reporte-table" *ngIf="reportePacientes.pacientes.length > 0">
+    <table class="reporte-table" *ngIf="reportePacientes.pacientes && reportePacientes.pacientes.length > 0">
       <thead>
         <tr>
           <th>Paciente</th>
@@ -129,12 +183,15 @@
       </thead>
       <tbody>
         <tr *ngFor="let paciente of reportePacientes.pacientes">
-          <td>{{ paciente.paciente_nombre }}</td>
-          <td>{{ paciente.total_consultas }}</td>
-          <td>{{ paciente.ultima_consulta }}</td>
+          <td>{{ paciente.paciente_nombre || paciente.nombre_completo || 'N/A' }}</td>
+          <td>{{ paciente.total_consultas || paciente.consultas || 0 }}</td>
+          <td>{{ paciente.ultima_consulta ? (paciente.ultima_consulta | date:'dd/MM/yyyy') : 'N/A' }}</td>
         </tr>
       </tbody>
     </table>
+    <div *ngIf="!reportePacientes.pacientes || reportePacientes.pacientes.length === 0" class="no-data">
+      <p>No se encontraron pacientes atendidos para el período seleccionado.</p>
+    </div>
   </div>
 
   <!-- Reporte de Estadísticas de Asistencia -->
@@ -143,19 +200,19 @@
     <div class="reporte-stats">
       <div class="stat-card">
         <span class="stat-label">Total de Turnos</span>
-        <span class="stat-value">{{ reporteAsistencia.total_turnos }}</span>
+        <span class="stat-value">{{ reporteAsistencia.total_turnos || 0 }}</span>
       </div>
       <div class="stat-card">
         <span class="stat-label">Completados</span>
-        <span class="stat-value">{{ reporteAsistencia.completados }} ({{ reporteAsistencia.porcentaje_completados }}%)</span>
+        <span class="stat-value">{{ reporteAsistencia.completados || 0 }} ({{ reporteAsistencia.porcentaje_completados || 0 }}%)</span>
       </div>
       <div class="stat-card">
         <span class="stat-label">Cancelados</span>
-        <span class="stat-value">{{ reporteAsistencia.cancelados }} ({{ reporteAsistencia.porcentaje_cancelados }}%)</span>
+        <span class="stat-value">{{ reporteAsistencia.cancelados || 0 }} ({{ reporteAsistencia.porcentaje_cancelados || 0 }}%)</span>
       </div>
       <div class="stat-card">
         <span class="stat-label">Ausentes</span>
-        <span class="stat-value">{{ reporteAsistencia.ausentes }} ({{ reporteAsistencia.porcentaje_ausentes }}%)</span>
+        <span class="stat-value">{{ reporteAsistencia.ausentes || 0 }} ({{ reporteAsistencia.porcentaje_ausentes || 0 }}%)</span>
       </div>
     </div>
   </div>

@@ -80,6 +80,18 @@ export class ReporteDashboardComponent implements OnInit {
     this.reporteAsistencia = null;
   }
 
+  getEstadisticasEspecialidad(turnos: any[]): { completados: number, cancelados: number, ausentes: number } {
+    if (!turnos || !Array.isArray(turnos)) {
+      return { completados: 0, cancelados: 0, ausentes: 0 };
+    }
+    
+    const completados = turnos.filter(t => t.estado === 'completado').length;
+    const cancelados = turnos.filter(t => t.estado === 'cancelado').length;
+    const ausentes = turnos.filter(t => t.estado === 'ausente').length;
+    
+    return { completados, cancelados, ausentes };
+  }
+
   generarReporte() {
     if (this.reporteForm.valid) {
       this.loading = true;
@@ -99,6 +111,7 @@ export class ReporteDashboardComponent implements OnInit {
           }
           this.reporteService.turnosPorMedico(medicoId, fechaInicio, fechaFin).subscribe({
             next: (data) => {
+              console.log('Reporte turnos por médico:', data);
               this.reporteTurnosMedico = data;
               this.loading = false;
             },
@@ -119,6 +132,7 @@ export class ReporteDashboardComponent implements OnInit {
           }
           this.reporteService.turnosPorEspecialidad(especialidadId, fechaInicio, fechaFin).subscribe({
             next: (data) => {
+              console.log('Reporte turnos por especialidad:', data);
               this.reporteTurnosEspecialidad = data;
               this.loading = false;
             },
@@ -133,6 +147,7 @@ export class ReporteDashboardComponent implements OnInit {
         case 'pacientes_atendidos':
           this.reporteService.pacientesAtendidos(fechaInicio, fechaFin).subscribe({
             next: (data) => {
+              console.log('Reporte pacientes atendidos:', data);
               this.reportePacientes = data;
               this.loading = false;
             },
@@ -147,6 +162,7 @@ export class ReporteDashboardComponent implements OnInit {
         case 'estadisticas_asistencia':
           this.reporteService.estadisticasAsistencia(fechaInicio, fechaFin).subscribe({
             next: (data) => {
+              console.log('Reporte estadísticas asistencia:', data);
               this.reporteAsistencia = data;
               this.loading = false;
             },
@@ -163,5 +179,18 @@ export class ReporteDashboardComponent implements OnInit {
           this.loading = false;
       }
     }
+  }
+
+  // Métodos auxiliares para verificar datos
+  hasValidData(reporte: any): boolean {
+    return reporte && Object.keys(reporte).length > 0;
+  }
+
+  formatNumber(num: number | null | undefined): number {
+    return num || 0;
+  }
+
+  formatPercentage(num: number | null | undefined): string {
+    return `${num || 0}%`;
   }
 }
