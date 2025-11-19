@@ -1,18 +1,19 @@
 <div class="especialidades-container">
-  <h2>Gestión de Especialidades</h2>
+  <div class="header">
+    <h2>Gestión de Especialidades</h2>
+    <button class="btn btn-primary" (click)="toggleFormulario()">
+      {{ modoCrear ? 'Cancelar' : 'Nueva Especialidad' }}
+    </button>
+  </div>
 
   <div *ngIf="loading" class="loading">Cargando...</div>
   <div *ngIf="error" class="error">{{ error }}</div>
   <div *ngIf="success" class="success">{{ success }}</div>
 
   <!-- Formulario para crear nueva especialidad -->
-  <div class="form-container" *ngIf="!loading">
-    <h3>{{ modoCrear ? 'Nueva Especialidad' : 'Ocultar Formulario' }}</h3>
-    <button class="btn-toggle" (click)="toggleFormulario()">
-      {{ modoCrear ? 'Cancelar' : '+ Nueva Especialidad' }}
-    </button>
-
-    <form *ngIf="modoCrear" class="form-nueva" (ngSubmit)="crearEspecialidad()">
+  <div class="form-container" *ngIf="modoCrear && !loading">
+    <h3>Nueva Especialidad</h3>
+    <form class="form-nueva" (ngSubmit)="crearEspecialidad()">
       <div class="form-group">
         <label for="nombre">Nombre *</label>
         <input
