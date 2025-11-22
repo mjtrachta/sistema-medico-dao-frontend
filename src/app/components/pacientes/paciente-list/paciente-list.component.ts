@@ -22,6 +22,11 @@ export class PacienteListComponent implements OnInit {
   editEmail: string = '';
   editTelefono: string = '';
 
+  // Variables para formulario modal
+  showForm = false;
+  editMode = false;
+  pacienteForm: any = this.resetForm();
+
   constructor(private pacienteService: PacienteService) {}
 
   ngOnInit() {
@@ -84,5 +89,104 @@ export class PacienteListComponent implements OnInit {
     this.editandoPaciente = null;
     this.editEmail = '';
     this.editTelefono = '';
+  }
+
+  resetForm(): any {
+    return {
+      nombre: '',
+      apellido: '',
+      tipo_documento: '',
+      nro_documento: '',
+      fecha_nacimiento: '',
+      genero: '',
+      email: '',
+      telefono: '',
+      direccion: '',
+      ciudad: '',
+      obra_social: '',
+      nro_afiliado: ''
+    };
+  }
+
+  openForm(paciente?: Paciente): void {
+    if (paciente) {
+      this.editMode = true;
+      this.pacienteForm = { ...paciente };
+    } else {
+      this.editMode = false;
+      this.pacienteForm = this.resetForm();
+    }
+    this.showForm = true;
+    this.error = null;
+    this.success = null;
+  }
+
+  closeForm(): void {
+    this.showForm = false;
+    this.pacienteForm = this.resetForm();
+    this.error = null;
+  }
+
+  savePaciente(): void {
+    if (!this.pacienteForm.nombre || !this.pacienteForm.apellido || 
+        !this.pacienteForm.tipo_documento || !this.pacienteForm.nro_documento ||
+        !this.pacienteForm.fecha_nacimiento || !this.pacienteForm.genero) {
+      this.error = 'Por favor complete todos los campos requeridos';
+      return;
+    }
+
+    this.loading = true;
+    this.error = null;
+
+    const pacienteData = {
+      nombre: this.pacienteForm.nombre,
+      apellido: this.pacienteForm.apellido,
+      tipo_documento: this.pacienteForm.tipo_documento,
+      nro_documento: this.pacienteForm.nro_documento,
+      fecha_nacimiento: this.pacienteForm.fecha_nacimiento,
+      genero: this.pacienteForm.genero,
+      email: this.pacienteForm.email || null,
+      telefono: this.pacienteForm.telefono || null,
+      direccion: this.pacienteForm.direccion || null,
+      ciudad: this.pacienteForm.ciudad || null,
+      obra_social: this.pacienteForm.obra_social || null,
+      nro_afiliado: this.pacienteForm.nro_afiliado || null
+    };
+
+    if (this.editMode) {
+      // TODO: Implementar edición completa si es necesario
+      this.loading = false;
+    } else {
+      this.pacienteService.create(pacienteData).subscribe({
+        next: (data) => {
+          this.success = 'Paciente creado exitosamente';
+          this.closeForm();
+          this.loadPacientes();
+          this.loading = false;
+          setTimeout(() => this.success = null, 3000);
+        },
+        error: (err) => {
+          this.error = 'Error al crear el paciente';
+          console.error(err);
+          this.loading = false;
+        }
+      });
+    }
+  }
+
+  deletePaciente(id: number) {
+    if (confirm('¿Está seguro de eliminar este paciente?')) {
+      this.pacienteService.delete(id).subscribe({
+        next: () => {
+          this.success = 'Paciente eliminado exitosamente';
+          this.loadPacientes();
+          setTimeout(() => this.success = null, 3000);
+        },
+        error: (err) => {
+          this.error = 'Error al eliminar el paciente';
+          console.error(err);
+        }
+      });
+    }
   }
 }

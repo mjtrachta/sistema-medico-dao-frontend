@@ -1,60 +1,128 @@
 <div class="historias-container">
-  <h2>Historias Clínicas - Agrupadas por Paciente</h2>
+  <h2 *ngIf="!isPaciente">Historias Clínicas - Agrupadas por Paciente</h2>
+  <h2 *ngIf="isPaciente">Mi Historia Clínica</h2>
 
   <div *ngIf="loading" class="loading">Cargando...</div>
   <div *ngIf="error" class="error">{{ error }}</div>
 
-  <div *ngIf="!loading && !error && pacientesHistorial.length === 0" class="empty-message">
-    No hay historias clínicas registradas
-  </div>
+  <!-- Vista para pacientes -->
+  <div *ngIf="isPaciente && !loading && !error">
+    <div *ngIf="historias.length === 0" class="empty-message">
+      <div class="empty-icon">📋</div>
+      <h3>No tienes historias clínicas registradas</h3>
+      <p>Cuando tengas consultas médicas, aquí aparecerán tus historias clínicas.</p>
+    </div>
 
-  <div *ngIf="!loading && !error && pacientesHistorial.length > 0" class="pacientes-container">
-    <!-- Cada paciente con sus historias -->
-    <div *ngFor="let pacienteHistorial of pacientesHistorial" class="paciente-card">
-      <!-- Header del paciente (clickeable para expandir/colapsar) -->
-      <div class="paciente-header" (click)="toggleExpand(pacienteHistorial)">
-        <div class="paciente-info">
-          <h3>{{ pacienteHistorial.paciente_nombre }}</h3>
-          <span class="nro-historia" *ngIf="pacienteHistorial.nro_historia_clinica">
-            HC: {{ pacienteHistorial.nro_historia_clinica }}
-          </span>
-          <span class="total-consultas">
-            {{ pacienteHistorial.historias.length }} consulta(s) registrada(s)
+    <div *ngIf="historias.length > 0" class="paciente-view">
+      <div class="paciente-info-card">
+        <div class="info-header">
+          <h3>{{ currentUser?.nombre_completo }}</h3>
+          <span class="nro-historia" *ngIf="currentUser?.nro_historia_clinica">
+            Historia Clínica: {{ currentUser?.nro_historia_clinica }}
           </span>
         </div>
-        <div class="expand-icon">
-          {{ pacienteHistorial.expanded ? '▼' : '▶' }}
+        <div class="stats">
+          <div class="stat-item">
+            <span class="stat-number">{{ historias.length }}</span>
+            <span class="stat-label">Consulta{{ historias.length === 1 ? '' : 's' }} registrada{{ historias.length === 1 ? '' : 's' }}</span>
+          </div>
         </div>
       </div>
 
-      <!-- Timeline de historias (expandible) -->
-      <div class="historias-timeline" *ngIf="pacienteHistorial.expanded">
-        <div *ngFor="let historia of pacienteHistorial.historias; let i = index" class="historia-entry">
-          <div class="timeline-marker">
-            <div class="timeline-dot"></div>
-            <div class="timeline-line" *ngIf="i < pacienteHistorial.historias.length - 1"></div>
+      <!-- Timeline de historias para paciente -->
+      <div class="historias-timeline-paciente">
+        <div *ngFor="let historia of historias; let i = index" class="historia-entry-paciente">
+          <div class="timeline-marker-paciente">
+            <div class="timeline-dot-paciente"></div>
+            <div class="timeline-line-paciente" *ngIf="i < historias.length - 1"></div>
           </div>
-          <div class="historia-content">
-            <div class="historia-fecha">
-              {{ historia.fecha_consulta || historia.fecha | date: 'dd/MM/yyyy HH:mm' }}
+          <div class="historia-card">
+            <div class="historia-fecha-main">
+              {{ formatFecha(historia.fecha_consulta || historia.fecha) }}
             </div>
-            <div class="historia-details">
-              <div class="detail-row">
-                <strong>Médico:</strong>
-                <span>{{ historia.medico?.nombre_completo }}</span>
+            <div class="historia-hora">
+              {{ formatHora(historia.fecha_consulta || historia.fecha) }}
+            </div>
+            <div class="historia-details-paciente">
+              <div class="detail-row-paciente">
+                <div class="detail-label">Médico tratante</div>
+                <div class="detail-value">{{ historia.medico?.nombre_completo }}</div>
               </div>
-              <div class="detail-row">
-                <strong>Diagnóstico:</strong>
-                <span>{{ historia.diagnostico }}</span>
+              <div class="detail-row-paciente">
+                <div class="detail-label">Motivo de consulta</div>
+                <div class="detail-value">{{ historia.motivo_consulta || 'No especificado' }}</div>
               </div>
-              <div class="detail-row" *ngIf="historia.tratamiento">
-                <strong>Tratamiento:</strong>
-                <span>{{ historia.tratamiento }}</span>
+              <div class="detail-row-paciente">
+                <div class="detail-label">Diagnóstico</div>
+                <div class="detail-value">{{ historia.diagnostico }}</div>
+              </div>
+              <div class="detail-row-paciente" *ngIf="historia.tratamiento">
+                <div class="detail-label">Tratamiento indicado</div>
+                <div class="detail-value">{{ historia.tratamiento }}</div>
               </div>
             </div>
-            <button class="btn-view-small" (click)="viewHistoria(historia)">
-              Ver Detalle Completo
+            <button class="btn-view-detail" (click)="viewHistoria(historia)">
+              Ver detalles completos
             </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vista para otros roles (médicos, admin, etc.) -->
+  <div *ngIf="!isPaciente && !loading && !error">
+    <div *ngIf="pacientesHistorial.length === 0" class="empty-message">
+      No hay historias clínicas registradas
+    </div>
+    <div *ngIf="pacientesHistorial.length > 0" class="pacientes-container">
+      <!-- Cada paciente con sus historias -->
+      <div *ngFor="let pacienteHistorial of pacientesHistorial" class="paciente-card">
+        <!-- Header del paciente (clickeable para expandir/colapsar) -->
+        <div class="paciente-header" (click)="toggleExpand(pacienteHistorial)">
+          <div class="paciente-info">
+            <h3>{{ pacienteHistorial.paciente_nombre }}</h3>
+            <span class="nro-historia" *ngIf="pacienteHistorial.nro_historia_clinica">
+              HC: {{ pacienteHistorial.nro_historia_clinica }}
+            </span>
+            <span class="total-consultas">
+              {{ pacienteHistorial.historias.length }} consulta(s) registrada(s)
+            </span>
+          </div>
+          <div class="expand-icon">
+            {{ pacienteHistorial.expanded ? '▼' : '▶' }}
+          </div>
+        </div>
+
+        <!-- Timeline de historias (expandible) -->
+        <div class="historias-timeline" *ngIf="pacienteHistorial.expanded">
+          <div *ngFor="let historia of pacienteHistorial.historias; let i = index" class="historia-entry">
+            <div class="timeline-marker">
+              <div class="timeline-dot"></div>
+              <div class="timeline-line" *ngIf="i < pacienteHistorial.historias.length - 1"></div>
+            </div>
+            <div class="historia-content">
+              <div class="historia-fecha">
+                {{ historia.fecha_consulta || historia.fecha | date: 'dd/MM/yyyy HH:mm' }}
+              </div>
+              <div class="historia-details">
+                <div class="detail-row">
+                  <strong>Médico:</strong>
+                  <span>{{ historia.medico?.nombre_completo }}</span>
+                </div>
+                <div class="detail-row">
+                  <strong>Diagnóstico:</strong>
+                  <span>{{ historia.diagnostico }}</span>
+                </div>
+                <div class="detail-row" *ngIf="historia.tratamiento">
+                  <strong>Tratamiento:</strong>
+                  <span>{{ historia.tratamiento }}</span>
+                </div>
+              </div>
+              <button class="btn-view-small" (click)="viewHistoria(historia)">
+                Ver Detalle Completo
+              </button>
+            </div>
           </div>
         </div>
       </div>

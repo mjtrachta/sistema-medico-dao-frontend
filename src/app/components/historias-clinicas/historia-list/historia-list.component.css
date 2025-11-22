@@ -354,3 +354,218 @@ h2 {
   margin-bottom: 4px;
   font-weight: 600;
 }
+
+/* Estilos específicos para vista de paciente */
+.paciente-view {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.paciente-info-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.info-header h3 {
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.nro-historia {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  display: inline-block;
+}
+
+.stats {
+  margin-top: 16px;
+  display: flex;
+  gap: 20px;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  display: block;
+  font-size: 28px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.empty-message {
+  text-align: center;
+  padding: 40px 20px;
+  color: #7f8c8d;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.empty-message h3 {
+  margin-bottom: 8px;
+  color: #2c3e50;
+}
+
+.empty-message p {
+  margin: 0;
+  font-size: 16px;
+}
+
+/* Timeline para pacientes */
+.historias-timeline-paciente {
+  position: relative;
+}
+
+.historia-entry-paciente {
+  display: flex;
+  margin-bottom: 24px;
+}
+
+.timeline-marker-paciente {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 20px;
+  position: relative;
+}
+
+.timeline-dot-paciente {
+  width: 16px;
+  height: 16px;
+  background: #667eea;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 0 0 3px #667eea;
+  flex-shrink: 0;
+}
+
+.timeline-line-paciente {
+  width: 3px;
+  background: linear-gradient(180deg, #667eea, #e9ecef);
+  flex-grow: 1;
+  margin-top: 8px;
+  min-height: 40px;
+}
+
+.historia-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid #667eea;
+  flex-grow: 1;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.historia-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.historia-fecha-main {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 4px;
+  text-transform: capitalize;
+}
+
+.historia-hora {
+  font-size: 14px;
+  color: #7f8c8d;
+  margin-bottom: 16px;
+}
+
+.historia-details-paciente {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.detail-row-paciente {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #667eea;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-value {
+  font-size: 15px;
+  color: #2c3e50;
+  line-height: 1.4;
+}
+
+.btn-view-detail {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  align-self: flex-start;
+}
+
+.btn-view-detail:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Responsive para vista de paciente */
+@media (max-width: 768px) {
+  .historia-entry-paciente {
+    flex-direction: column;
+  }
+  
+  .timeline-marker-paciente {
+    flex-direction: row;
+    margin-right: 0;
+    margin-bottom: 12px;
+  }
+  
+  .timeline-line-paciente {
+    width: 40px;
+    height: 3px;
+    margin-top: 0;
+    margin-left: 8px;
+    min-height: auto;
+  }
+  
+  .paciente-info-card {
+    padding: 20px;
+  }
+  
+  .info-header h3 {
+    font-size: 20px;
+  }
+  
+  .stat-number {
+    font-size: 24px;
+  }
+}
